@@ -20,7 +20,7 @@ def render_income_column(scn):
         if cols[0].button("Edit", key=f"i_edit_{c['id']}"): st.session_state["selected"]={"kind":"income","id":c["id"]}; st.experimental_rerun()
         if cols[1].button("Duplicate", key=f"i_dup_{c['id']}"):
             import copy; scn["income_cards"].insert(i+1, copy.deepcopy(c)); st.experimental_rerun()
-        if cols[2].button("Remove", key=f"i_rm_{c['id']}"]):
+        if cols[2].button("Remove", key=f"i_rm_{c['id']}"):
             scn["income_cards"].pop(i); st.experimental_rerun()
         total+=preview
     st.caption(f"Total monthly income (preview): ${total:,.2f}")
@@ -36,7 +36,7 @@ def render_debt_column(scn):
         if cols[0].button("Edit", key=f"d_edit_{d['id']}"): st.session_state["selected"]={"kind":"debt","id":d["id"]}; st.experimental_rerun()
         if cols[1].button("Duplicate", key=f"d_dup_{d['id']}"):
             import copy; scn["debt_cards"].insert(i+1, copy.deepcopy(d)); st.experimental_rerun()
-        if cols[2].button("Remove", key=f"d_rm_{d['id']}"]):
+        if cols[2].button("Remove", key=f"d_rm_{d['id']}"):
             scn["debt_cards"].pop(i); st.experimental_rerun()
         total+=pay
     st.caption(f"Sum of listed payments (policy may adjust student loans): ${total:,.2f}")
