@@ -5,7 +5,18 @@ from ui.sidebar_editor import render_sidebar
 from ui.bottombar import render_bottombar
 from ui.tabs_dashboard import render_dashboard
 from core.scenarios import default_scenario
-from core.calculators import piti_components, dti, debts_monthly_total, w2_row_to_monthly, schc_rows_to_monthly, k1_rows_to_monthly, c1120_rows_to_monthly, rentals_schedule_e_monthly, rentals_75pct_gross_monthly, other_income_rows_to_monthly
+from core.calculators import (
+    piti_components,
+    dti,
+    debts_monthly_total,
+    w2_row_to_monthly,
+    schc_rows_to_monthly,
+    k1_rows_to_monthly,
+    c1120_rows_to_monthly,
+    rentals_schedule_e_monthly,
+    rentals_75pct_gross_monthly,
+    other_income_rows_to_monthly,
+)
 from core.presets import DISCLAIMER
 st.set_page_config(page_title="AMALO v2", layout="wide")
 if "scenarios" not in st.session_state:
