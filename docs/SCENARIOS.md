@@ -1,0 +1,1 @@
+Each scenario is a full copy of the session. Use the top bar to manage scenarios.

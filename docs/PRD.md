@@ -1,0 +1,1 @@
+See app for behavior; this mirrors your v2 spec with scenarios, rules, and guidance center.
