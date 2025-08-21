@@ -8,7 +8,7 @@ def render_topbar():
         with c1: st.markdown("### AMALO")
         with c2:
             colA,colB,colC=st.columns(3)
-            st.session_state["program"]=colA.selectbox("Program", list(P.PROGRAM_PRESETS.keys()), key="program")
+            colA.selectbox("Program", list(P.PROGRAM_PRESETS.keys()), key="program")
             fe_default=P.PROGRAM_PRESETS[st.session_state["program"]]["fe_target"]
             be_default=P.PROGRAM_PRESETS[st.session_state["program"]]["be_target"]
             st.session_state.setdefault("fe_target", fe_default); st.session_state.setdefault("be_target", be_default)
