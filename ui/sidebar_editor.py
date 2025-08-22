@@ -3,7 +3,7 @@ from core.calculators import (
     w2_row_to_monthly, schc_rows_to_monthly, k1_rows_to_monthly, c1120_rows_to_monthly,
     rentals_schedule_e_monthly, rentals_75pct_gross_monthly, other_income_rows_to_monthly
 )
-from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE
+from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE, DISCLAIMER
 
 HELP_MAP={
  "W-2":{"annual_salary":"Paystub YTD/Base; W-2 Box 1 context","hourly_rate":"Paystub rate","hours_per_week":"Offer/VOE","ot_ytd":"Paystub YTD OT","bonus_ytd":"Paystub YTD Bonus","comm_ytd":"Paystub YTD Commission","months_ytd":"Months covered by YTD","ot_ly":"W-2/Last Year OT","bonus_ly":"W-2/Last Year Bonus","comm_ly":"W-2/Last Year Comm","months_ly":"Months for LY variable"},
@@ -15,26 +15,37 @@ HELP_MAP={
 }
 def _id(): return uuid.uuid4().hex[:8]
 def render_guidance_center(scn, warnings):
-    tab = st.segmented_control("Guidance Center", ["Guides","Warnings","Where to find"], key="gc_tab")
-    if tab=="Guides":
-        st.markdown("""- **W-2**: Base = salary or hourly × hours × 52/12. Variable income requires stability (≥12 months).
+    tab = st.segmented_control(
+        "Info Box", ["Disclosures", "Warnings", "Guides", "Where to find"], key="gc_tab"
+    )
+    if tab == "Disclosures":
+        st.caption(DISCLAIMER)
+    elif tab == "Warnings":
+        if not warnings:
+            st.info("No warnings currently.")
+        else:
+            for r in warnings:
+                if r["severity"] == "critical":
+                    st.error(f"[{r['code']}] {r['message']}")
+                elif r["severity"] == "warn":
+                    st.warning(f"[{r['code']}] {r['message']}")
+                else:
+                    st.info(f"[{r['code']}] {r['message']}")
+    elif tab == "Guides":
+        st.markdown(
+            """- **W-2**: Base = salary or hourly × hours × 52/12. Variable income requires stability (≥12 months).
 - **Schedule C**: Two-year average of adjusted income (L31 + add-backs).
 - **K-1**: Use only with verified distributions or documented business liquidity.
 - **1120**: Only if 100% owner.
 - **Rental**: Choose Schedule E (add back depreciation) **or** 75% of gross (subject: use 75% market rent − PITIA).
-- **Other**: Support income needs ≥3 years continuance. Gross-up only if non-taxable and allowed.""")
-    elif tab=="Warnings":
-        if not warnings: st.info("No warnings currently.")
-        else:
-            for r in warnings:
-                if r["severity"]=="critical": st.error(f"[{r['code']}] {r['message']}")
-                elif r["severity"]=="warn": st.warning(f"[{r['code']}] {r['message']}")
-                else: st.info(f"[{r['code']}] {r['message']}")
+- **Other**: Support income needs ≥3 years continuance. Gross-up only if non-taxable and allowed."""
+        )
     else:
         st.markdown("**Where to find common fields**")
         for typ, fmap in HELP_MAP.items():
             st.write(f"**{typ}**")
-            for f,desc in fmap.items(): st.caption(f"- {f}: {desc}")
+            for f, desc in fmap.items():
+                st.caption(f"- {f}: {desc}")
 def render_income_new(scn):
     typ = st.selectbox("Income type", ["W-2","Schedule C","K-1","1120","Rental","Other"], key="new_income_typ")
     if st.button("Create income card"):
@@ -194,7 +205,7 @@ def render_property_editor(h):
     st.json({"Conventional_MI_bands":CONV_MI_BANDS,"FHA":FHA_TABLE,"VA":VA_TABLE,"USDA":USDA_TABLE})
 def render_sidebar(selected, scn, warnings):
     if selected is None or selected.get("kind") is None:
-        render_guidance_center(scn, warnings)
+        st.info("Select an item to edit from the main panel.")
         return
     if selected["kind"]=="income_new":
         render_income_new(scn)
@@ -215,5 +226,3 @@ def render_sidebar(selected, scn, warnings):
             render_debt_editor(card, policy)
     elif selected["kind"]=="property":
         render_property_editor(scn["housing"])
-    st.markdown("---")
-    render_guidance_center(scn, warnings)
