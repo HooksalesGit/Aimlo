@@ -12,4 +12,8 @@ All notable changes to this project will be documented in this file.
 - Sidebar and bottom bar toggle arrows with dark gray styling.
 - Sidebar headers now appear inside their bordered boxes for clearer grouping.
 - Replace deprecated `st.experimental_rerun` calls with `st.rerun` for Streamlit 1.27+ compatibility.
+- Fixed sidebar no longer obscures main content and its sections scroll within bounds.
+
+### Changed
+- Sidebar redesigned as fixed-width full-height panel with bottom disclosures box.
 

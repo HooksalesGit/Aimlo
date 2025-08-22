@@ -6,6 +6,7 @@ from ui.tabs_dashboard import render_dashboard
 from ui.sidebar_editor import render_sidebar, render_guidance_center
 from ui.utils import show_sidebar, hide_sidebar, show_bottombar
 from ui.theme import THEME
+from ui.layout_helpers import build_sidebar_css, SIDEBAR_WIDTH
 from core.scenarios import default_scenario
 from core.calculators import (
     piti_components,
@@ -29,54 +30,42 @@ st.session_state.setdefault("selected", {"kind":None,"id":None})
 st.session_state.setdefault("sidebar_visible", True)
 st.session_state.setdefault("bottombar_visible", True)
 st.session_state.setdefault("view_mode","Data Entry")
+# Render top bar and compute style variables
 render_topbar()
-if st.session_state.get("sidebar_visible", True):
-    if st.button("\u25c0", key="sidebar_hide"):
-        hide_sidebar()
-        st.rerun()
-    cols = st.columns([2,5,3], gap="medium")
-    left, main, right = cols[0], cols[1], cols[2]
-else:
-    if st.button("\u25b6", key="sidebar_show"):
-        show_sidebar()
-        st.rerun()
-    cols = st.columns([7,3], gap="medium")
-    left, main, right = None, cols[0], cols[1]
 colors = THEME["colors"]
 panel_bg = colors.get("panel_bg", "#333333")
 panel_text = colors.get("panel_text", "#ffffff")
+sidebar_visible = st.session_state.get("sidebar_visible", True)
 st.markdown(
-    f"""
-<style>
-.scroll-income,.scroll-debt,.scroll-prop{{max-height:400px;overflow-y:auto;border:1px solid #ccc;padding:8px;}}
-.scroll-data{{max-height:300px;overflow-y:auto;}}
-.scroll-disc{{max-height:200px;overflow-y:auto;}}
-.sidebar-box{{background:{panel_bg};color:{panel_text};padding:8px;border:1px solid #ccc;margin-bottom:8px;}}
-#sidebar_hide button,#sidebar_show button{{background:{panel_bg};color:{panel_text};border:none;}}
-#sidebar_hide,#sidebar_show{{position:absolute;top:70px;left:0;z-index:1000;}}
-#bottombar_show button{{background:{panel_bg};color:{panel_text};border:none;}}
-#bottombar_show{{position:fixed;bottom:0;right:10px;z-index:1000;}}
-</style>
-""",
+    build_sidebar_css(panel_bg, panel_text, sidebar_visible, SIDEBAR_WIDTH),
     unsafe_allow_html=True,
 )
-scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
-if left is not None:
-    with left:
-        st.markdown("<div class='sidebar-box'>", unsafe_allow_html=True)
-        st.subheader("Data entry")
-        st.markdown("<div class='scroll-data'>", unsafe_allow_html=True)
-        render_sidebar(st.session_state.get("selected"), scn, warnings=[])
-        st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<div class='sidebar-box'>", unsafe_allow_html=True)
-        st.subheader("Disclosures")
-        st.markdown("<div class='scroll-disc'>", unsafe_allow_html=True)
-        render_guidance_center(scn, warnings=[])
-        st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-with main:
+# Toggle button to show/hide sidebar
+st.markdown("<div class='sidebar-toggle'>", unsafe_allow_html=True)
+if sidebar_visible:
+    if st.button("\u25c0", key="sidebar_hide"):
+        hide_sidebar(); st.rerun()
+else:
+    if st.button("\u25b6", key="sidebar_show"):
+        show_sidebar(); st.rerun()
+st.markdown("</div>", unsafe_allow_html=True)
+
+scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
+if sidebar_visible:
+    st.markdown("<div class='fixed-sidebar'>", unsafe_allow_html=True)
+    st.markdown("<div class='data'>", unsafe_allow_html=True)
+    st.subheader("Data entry")
+    render_sidebar(st.session_state.get("selected"), scn, warnings=[])
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div class='disc'>", unsafe_allow_html=True)
+    st.subheader("Disclosures")
+    render_guidance_center(scn, warnings=[])
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+col_main, right = st.columns([5,3], gap="medium")
+with col_main:
     col_income, col_debt = st.columns(2)
     with col_income:
         st.markdown("<div class='scroll-income'>", unsafe_allow_html=True)
