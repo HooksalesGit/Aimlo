@@ -13,3 +13,6 @@ All notable changes to this project will be documented in this file.
 - Sidebar headers now appear inside their bordered boxes for clearer grouping.
 - Replace deprecated `st.experimental_rerun` calls with `st.rerun` for Streamlit 1.27+ compatibility.
 
+### Changed
+- Sidebar redesigned as fixed-width full-height panel with bottom disclosures box.
+
