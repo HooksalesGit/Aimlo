@@ -32,4 +32,7 @@ def render_topbar():
                 import copy; scenarios[current + " (copy)"] = copy.deepcopy(scenarios[current]); st.session_state["scenario_name"]=current + " (copy)"; st.experimental_rerun()
             if cols[3].button("🗑", help="Delete current"):
                 if len(scenarios)>1: scenarios.pop(current, None); st.session_state["scenario_name"]=list(scenarios.keys())[0]; st.experimental_rerun()
+            with st.expander("Quick Settings"):
+                st.checkbox("Show Sidebar", key="sidebar_visible", value=st.session_state.get("sidebar_visible", True))
+                st.checkbox("Show Bottom Bar", key="bottombar_visible", value=st.session_state.get("bottombar_visible", True))
         st.markdown("</div>", unsafe_allow_html=True)

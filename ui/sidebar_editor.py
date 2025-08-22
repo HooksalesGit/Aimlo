@@ -194,17 +194,26 @@ def render_property_editor(h):
     st.json({"Conventional_MI_bands":CONV_MI_BANDS,"FHA":FHA_TABLE,"VA":VA_TABLE,"USDA":USDA_TABLE})
 def render_sidebar(selected, scn, warnings):
     if selected is None or selected.get("kind") is None:
-        render_guidance_center(scn, warnings); return
-    if selected["kind"]=="income_new": render_income_new(scn); return
-    if selected["kind"]=="debt_new": render_debt_new(scn); return
-    if selected["kind"]=="income":
+        render_guidance_center(scn, warnings)
+        return
+    if selected["kind"]=="income_new":
+        render_income_new(scn)
+    elif selected["kind"]=="debt_new":
+        render_debt_new(scn)
+    elif selected["kind"]=="income":
         card=next((x for x in scn["income_cards"] if x["id"]==selected["id"]), None)
-        if not card: st.info("No card found."); return
-        render_income_editor(card); return
-    if selected["kind"]=="debt":
+        if not card:
+            st.info("No card found.")
+        else:
+            render_income_editor(card)
+    elif selected["kind"]=="debt":
         card=next((x for x in scn["debt_cards"] if x["id"]==selected["id"]), None)
-        if not card: st.info("No debt found."); return
-        policy=scn.get("settings",{}).get("student_loan_policy","Conventional")
-        render_debt_editor(card, policy); return
-    if selected["kind"]=="property":
-        render_property_editor(scn["housing"]); return
+        if not card:
+            st.info("No debt found.")
+        else:
+            policy=scn.get("settings",{}).get("student_loan_policy","Conventional")
+            render_debt_editor(card, policy)
+    elif selected["kind"]=="property":
+        render_property_editor(scn["housing"])
+    st.markdown("---")
+    render_guidance_center(scn, warnings)
