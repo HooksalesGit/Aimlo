@@ -18,7 +18,7 @@ from core.calculators import (
     other_income_rows_to_monthly,
 )
 from core.presets import DISCLAIMER
-st.set_page_config(page_title="AMALO v2", layout="wide")
+st.set_page_config(page_title="Aimlo", layout="wide")
 if "scenarios" not in st.session_state:
     st.session_state["scenarios"]={"Default": default_scenario()}
     st.session_state["scenario_name"]="Default"
@@ -86,4 +86,4 @@ if st.button("Open Dashboard"):
             tmp=tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
             deal={"Scenario":st.session_state["scenario_name"],"Program":h["program"],"Rate":h["rate_pct"],"TermYears":h["term_years"],"PurchasePrice":h["purchase_price"],"BaseLoan":comp["BaseLoan"],"AdjustedLoan":comp["AdjustedLoan"],"LTV":comp["LTV"]}
             build_prequal_pdf(tmp.name, deal, summary, rules, checklist, DISCLAIMER)
-            with open(tmp.name,"rb") as f: st.download_button("Download PDF", data=f.read(), file_name=f"amalo_{st.session_state['scenario_name']}.pdf"); os.unlink(tmp.name)
+            with open(tmp.name,"rb") as f: st.download_button("Download PDF", data=f.read(), file_name=f"aimlo_{st.session_state['scenario_name']}.pdf"); os.unlink(tmp.name)
