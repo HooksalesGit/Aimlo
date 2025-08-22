@@ -6,7 +6,7 @@ from core.calculators import (
     rentals_schedule_e_monthly, rentals_75pct_gross_monthly, other_income_rows_to_monthly
 )
 from ui.utils import borrower_selectbox
-from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE, DISCLAIMER
+from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE
 
 HELP_MAP={
  "W-2":{"annual_salary":"Paystub YTD/Base; W-2 Box 1 context","hourly_rate":"Paystub rate","hours_per_week":"Offer/VOE","ot_ytd":"Paystub YTD OT","bonus_ytd":"Paystub YTD Bonus","comm_ytd":"Paystub YTD Commission","months_ytd":"Months covered by YTD","ot_ly":"W-2/Last Year OT","bonus_ly":"W-2/Last Year Bonus","comm_ly":"W-2/Last Year Comm","months_ly":"Months for LY variable"},
@@ -17,38 +17,6 @@ HELP_MAP={
  "Other":{"gross_monthly":"Award letter or bank statements","gross_up_pct":"If non-taxable, agency gross-up"}
 }
 def _id(): return uuid.uuid4().hex[:8]
-def render_guidance_center(scn, warnings):
-    tab = st.segmented_control(
-        "Info Box", ["Disclosures", "Warnings", "Guides", "Where to find"], key="gc_tab"
-    )
-    if tab == "Disclosures":
-        st.caption(DISCLAIMER)
-    elif tab == "Warnings":
-        if not warnings:
-            st.info("No warnings currently.")
-        else:
-            for r in warnings:
-                if r["severity"] == "critical":
-                    st.error(f"[{r['code']}] {r['message']}")
-                elif r["severity"] == "warn":
-                    st.warning(f"[{r['code']}] {r['message']}")
-                else:
-                    st.info(f"[{r['code']}] {r['message']}")
-    elif tab == "Guides":
-        st.markdown(
-            """- **W-2**: Base = salary or hourly × hours × 52/12. Variable income requires stability (≥12 months).
-- **Schedule C**: Two-year average of adjusted income (L31 + add-backs).
-- **K-1**: Use only with verified distributions or documented business liquidity.
-- **1120**: Only if 100% owner.
-- **Rental**: Choose Schedule E (add back depreciation) **or** 75% of gross (subject: use 75% market rent − PITIA).
-- **Other**: Support income needs ≥3 years continuance. Gross-up only if non-taxable and allowed."""
-        )
-    else:
-        st.markdown("**Where to find common fields**")
-        for typ, fmap in HELP_MAP.items():
-            st.write(f"**{typ}**")
-            for f, desc in fmap.items():
-                st.caption(f"- {f}: {desc}")
 
 def render_borrowers_editor(scn):
     st.subheader("Borrowers")
@@ -224,30 +192,33 @@ def render_property_editor(h):
     st.markdown("---"); st.markdown("### Program Tables (MI/MIP/Fees)"); st.caption("Edit defaults as needed (Conventional MI bands, FHA/VA/USDA upfront & annual).")
     st.json({"Conventional_MI_bands":CONV_MI_BANDS,"FHA":FHA_TABLE,"VA":VA_TABLE,"USDA":USDA_TABLE})
 def render_context_form(active, scn, warnings):
+    """Render the drawer content for the currently active editor."""
     if active is None or active.get("kind") is None:
         render_disclosures(warnings)
         return
-    if active["kind"]=="income_new":
+    if active["kind"] == "income_new":
         render_income_new(scn)
-    elif active["kind"]=="debt_new":
+    elif active["kind"] == "debt_new":
         render_debt_new(scn)
-    elif active["kind"]=="income":
-        card=next((x for x in scn["income_cards"] if x["id"]==active["id"]), None)
+    elif active["kind"] == "income":
+        card = next((x for x in scn["income_cards"] if x["id"] == active["id"]), None)
         if not card:
             st.info("No card found.")
         else:
             render_income_editor(card)
-    elif active["kind"]=="debt":
-        card=next((x for x in scn["debt_cards"] if x["id"]==active["id"]), None)
+    elif active["kind"] == "debt":
+        card = next((x for x in scn["debt_cards"] if x["id"] == active["id"]), None)
         if not card:
             st.info("No debt found.")
         else:
-            policy=scn.get("settings",{}).get("student_loan_policy","Conventional")
+            policy = scn.get("settings", {}).get("student_loan_policy", "Conventional")
             render_debt_editor(card, policy)
-    elif active["kind"]=="borrowers":
+    elif active["kind"] == "borrowers":
         render_borrowers_editor(scn)
-    elif active["kind"]=="property":
+    elif active["kind"] == "property":
         render_property_editor(scn["housing"])
+    st.markdown("---")
+    render_disclosures(warnings)
 
 def render_drawer(scn, warnings=None):
     warnings = warnings or []
@@ -255,11 +226,15 @@ def render_drawer(scn, warnings=None):
     width = cfg["drawer_width"]
     overlay = cfg["overlay_rgba"]
     transition = cfg["transition_ms"]
+    colors = THEME["colors"]
+    bg = colors.get("panel_bg", "#222")
+    text = colors.get("panel_text", "#fff")
+    border = colors.get("border", "#333")
     open_state = st.session_state.get("drawer_open", False)
     st.markdown(
         f"""
     <style>
-    .drawer{{position:fixed;top:0;left:0;bottom:0;width:{width}px;background:#fff;padding:16px;box-shadow:0 0 10px rgba(0,0,0,.3);transform:translateX(-100%);transition:transform {transition}ms;z-index:1000;overflow-y:auto;}}
+    .drawer{{position:fixed;top:0;left:0;bottom:0;width:{width}px;background:{bg};color:{text};padding:16px;border-right:1px solid {border};box-shadow:0 0 10px rgba(0,0,0,.3);transform:translateX(-100%);transition:transform {transition}ms;z-index:1000;overflow-y:auto;}}
     .drawer.open{{transform:translateX(0);}}
     .drawer-overlay{{position:fixed;top:0;left:0;right:0;bottom:0;background:{overlay};z-index:999;}}
     </style>
@@ -267,12 +242,20 @@ def render_drawer(scn, warnings=None):
         unsafe_allow_html=True,
     )
     if open_state:
-        st.markdown("<div class='drawer-overlay'></div>", unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class='drawer-overlay' onclick="document.getElementById('drawer_close').click()"></div>
+            <script>
+            document.addEventListener('keydown', function(e){if(e.key==='Escape'){document.getElementById('drawer_close').click();}});
+            </script>
+            """,
+            unsafe_allow_html=True,
+        )
     classes = "drawer open" if open_state else "drawer"
     st.markdown(f"<div class='{classes}'>", unsafe_allow_html=True)
-    if st.button("Hide sidebar", key="hide_sidebar"):
+    if st.button("✕", key="drawer_close"):
         st.session_state["drawer_open"] = False
         st.session_state["active_editor"] = None
-        st.experimental_rerun()
+        st.rerun()
     render_context_form(st.session_state.get("active_editor"), scn, warnings)
     st.markdown("</div>", unsafe_allow_html=True)
