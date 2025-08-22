@@ -1,0 +1,6 @@
+# field_hints.yml
+# Single source for field help text. Populate as fields are added.
+example_field:
+  label: "Example Field"
+  where: "Example document"
+  definition: "Short description of the field."
