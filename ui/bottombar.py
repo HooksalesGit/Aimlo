@@ -8,7 +8,7 @@ def render_bottombar(enabled, summary, checklist):
     if st.button("▼", key="bottombar_hide"):
         from ui.utils import hide_bottombar
         hide_bottombar()
-        st.experimental_rerun()
+        st.rerun()
     fe, be = summary.get("FE", 0.0), summary.get("BE", 0.0)
     fe_t, be_t = summary.get("FE_target", 1.0), summary.get("BE_target", 1.0)
     fe_ok = fe <= fe_t

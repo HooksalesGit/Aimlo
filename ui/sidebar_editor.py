@@ -59,13 +59,13 @@ def render_income_new(scn):
           "Other":{"borrower_id":1,"type":"Social Security","gross_monthly":0.0,"gross_up_pct":0.0,"continuance_3yr":False},
         }
         scn["income_cards"].append({"id":cid,"type":typ,"payload":defaults[typ]})
-        st.session_state["selected"]={"kind":"income","id":cid}; st.experimental_rerun()
+        st.session_state["selected"]={"kind":"income","id":cid}; st.rerun()
 def render_debt_new(scn):
     typ = st.selectbox("Debt type", ["installment","revolving","student_loan","support"], key="new_debt_typ")
     if st.button("Create debt card"):
         cid=_id()
         scn["debt_cards"].append({"id":cid,"borrower_id":1,"type":typ,"name":"","monthly_payment":0.0,"remaining_payments":None,"exclude_lt_10":False,"pay_off_at_close":False,"sl_balance":0.0,"sl_documented_payment":0.0,"sl_amortizing":False})
-        st.session_state["selected"]={"kind":"debt","id":cid}; st.experimental_rerun()
+        st.session_state["selected"]={"kind":"debt","id":cid}; st.rerun()
 def render_income_editor(card):
     t=card["type"]; p=card["payload"]
     st.number_input("Borrower ID (1-6)", value=int(p.get("borrower_id",1)), min_value=1, max_value=6, step=1, key=f"ed_bid_{card['id']}")
