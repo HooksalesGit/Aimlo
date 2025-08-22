@@ -1,7 +1,6 @@
 import streamlit as st, json, tempfile, os
 from ui.topbar import render_topbar
 from ui.layout import render_income_column, render_debt_column, render_property_snapshot
-from ui.sidebar_editor import render_sidebar
 from ui.bottombar import render_bottombar
 from ui.tabs_dashboard import render_dashboard
 from core.scenarios import default_scenario
@@ -27,15 +26,24 @@ st.session_state.setdefault("sidebar_visible", True)
 st.session_state.setdefault("bottombar_visible", True)
 st.session_state.setdefault("view_mode","Data Entry")
 render_topbar()
-left, main, right = st.columns([2,5,3], gap="medium")
+if st.session_state.get("sidebar_visible", True):
+    cols = st.columns([2,5,3], gap="medium")
+    left, main, right = cols[0], cols[1], cols[2]
+else:
+    cols = st.columns([7,3], gap="medium")
+    left, main, right = None, cols[0], cols[1]
 scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
-with left:
-    st.subheader("Data entry")
-    from ui.sidebar_editor import render_sidebar as _render_sidebar
-    _render_sidebar(st.session_state.get("selected"), scn, warnings=[])
+if left is not None:
+    with left:
+        st.subheader("Data entry")
+        from ui.sidebar_editor import render_sidebar as _render_sidebar
+        _render_sidebar(st.session_state.get("selected"), scn, warnings=[])
 with main:
-    render_income_column(scn)
-    render_debt_column(scn)
+    col_income, col_debt = st.columns(2)
+    with col_income:
+        render_income_column(scn)
+    with col_debt:
+        render_debt_column(scn)
 with right:
     render_property_snapshot(scn)
 # Compute totals
