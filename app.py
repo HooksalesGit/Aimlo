@@ -1,12 +1,9 @@
-import streamlit as st, json, tempfile, os
+import streamlit as st
 from ui.topbar import render_topbar
-from ui.layout import render_income_column, render_debt_column, render_property_snapshot
+from ui.layout import render_layout
+from ui.sidebar_editor import render_drawer
 from ui.bottombar import render_bottombar
-from ui.tabs_dashboard import render_dashboard
-from ui.sidebar_editor import render_sidebar, render_guidance_center
-from ui.utils import show_sidebar, hide_sidebar, show_bottombar
-from ui.theme import THEME
-from ui.layout_helpers import build_sidebar_css, SIDEBAR_WIDTH
+from ui.utils import show_bottombar
 from core.scenarios import default_scenario
 from core.calculators import (
     piti_components,
@@ -20,109 +17,72 @@ from core.calculators import (
     rentals_75pct_gross_monthly,
     other_income_rows_to_monthly,
 )
-from core.presets import DISCLAIMER
 from core.checklist import document_checklist
+
 st.set_page_config(page_title="Aimlo", layout="wide")
 if "scenarios" not in st.session_state:
-    st.session_state["scenarios"]={"Default": default_scenario()}
-    st.session_state["scenario_name"]="Default"
-st.session_state.setdefault("selected", {"kind":None,"id":None})
-st.session_state.setdefault("sidebar_visible", True)
+    st.session_state["scenarios"] = {"Default": default_scenario()}
+    st.session_state["scenario_name"] = "Default"
+st.session_state.setdefault("drawer_open", False)
+st.session_state.setdefault("active_editor", None)
 st.session_state.setdefault("bottombar_visible", True)
-st.session_state.setdefault("view_mode","Data Entry")
-# Render top bar and compute style variables
+
 render_topbar()
-colors = THEME["colors"]
-panel_bg = colors.get("panel_bg", "#333333")
-panel_text = colors.get("panel_text", "#ffffff")
-sidebar_visible = st.session_state.get("sidebar_visible", True)
-st.markdown(
-    build_sidebar_css(panel_bg, panel_text, sidebar_visible, SIDEBAR_WIDTH),
-    unsafe_allow_html=True,
+scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
+render_layout(scn)
+
+# Compute totals for bottom bar
+h = scn["housing"]
+comp = piti_components(
+    h.get("purchase_price", 0),
+    h.get("down_payment_amt", 0),
+    h.get("rate_pct", 0),
+    h.get("term_years", 0),
+    h.get("tax_rate_pct", 0),
+    h.get("hoi_annual", 0),
+    h.get("hoa_monthly", 0),
+    h.get("program", "Conventional"),
+    h.get("finance_upfront", False),
 )
 
-# Toggle button to show/hide sidebar
-if sidebar_visible:
-    if st.button("Hide sidebar", key="sidebar_hide"):
-        hide_sidebar(); st.rerun()
-else:
-    if st.button("Show sidebar", key="sidebar_show"):
-        show_sidebar(); st.rerun()
-
-scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
-
-if sidebar_visible:
-    col_sidebar, col_content = st.columns([1, 3], gap="medium")
-    with col_sidebar:
-        st.subheader("Data entry")
-        render_sidebar(st.session_state.get("selected"), scn, warnings=[])
-        st.subheader("Disclosures")
-        render_guidance_center(scn, warnings=[])
-    with col_content:
-        col_main, col_prop = st.columns([3, 1])
-        with col_main:
-            col_income, col_debt = st.columns(2)
-            with col_income:
-                render_income_column(scn)
-            with col_debt:
-                render_debt_column(scn)
-        with col_prop:
-            render_property_snapshot(scn)
-else:
-    # Sidebar hidden, main content full width
-    col_main, col_prop = st.columns([3, 1])
-    with col_main:
-        col_income, col_debt = st.columns(2)
-        with col_income:
-            render_income_column(scn)
-        with col_debt:
-            render_debt_column(scn)
-    with col_prop:
-        render_property_snapshot(scn)
-# Compute totals
-h=scn["housing"]
-comp=piti_components(h["purchase_price"],h["down_payment_amt"],h["rate_pct"],h["term_years"],h["tax_rate_pct"],h["hoi_annual"],h["hoa_monthly"],h["program"],h["finance_upfront"])
-total_income=0.0
-for c in scn["income_cards"]:
-    t=c.get("type"); p=c.get("payload",{})
-    if t=="W-2": total_income+=w2_row_to_monthly(p)
-    elif t=="Schedule C": total_income+=schc_rows_to_monthly([p])
-    elif t=="K-1": total_income+=k1_rows_to_monthly([p])
-    elif t=="1120": total_income+=c1120_rows_to_monthly([p])
-    elif t=="Rental":
-        if p.get("method")=="Schedule E": total_income+=rentals_schedule_e_monthly(p.get("lines",[]))
-        else: total_income+=rentals_75pct_gross_monthly(p.get("gross_rents_annual",0.0)); total_income += 0.75*float(p.get("subject_market_rent",0.0)) - float(p.get("subject_pitia",0.0))
-    elif t=="Other": total_income+=other_income_rows_to_monthly([p])
-policy = scn.get("settings",{}).get("student_loan_policy","Conventional")
-other_debts = debts_monthly_total(scn["debt_cards"], policy)
-FE,BE=dti(comp["PITIA"], other_debts, total_income)
-summary={"TotalIncome":total_income,"PITIA":comp["PITIA"],"OtherDebts":other_debts,"FE":FE,"BE":BE,"FE_target":st.session_state.get("fe_target",0.31),"BE_target":st.session_state.get("be_target",0.43)}
-checklist=document_checklist(scn["income_cards"])
+total_income = 0.0
+for c in scn.get("income_cards", []):
+    t = c.get("type")
+    p = c.get("payload", {})
+    if t == "W-2":
+        total_income += w2_row_to_monthly(p)
+    elif t == "Schedule C":
+        total_income += schc_rows_to_monthly([p])
+    elif t == "K-1":
+        total_income += k1_rows_to_monthly([p])
+    elif t == "1120":
+        total_income += c1120_rows_to_monthly([p])
+    elif t == "Rental":
+        if p.get("method") == "Schedule E":
+            total_income += rentals_schedule_e_monthly(p.get("lines", []))
+        else:
+            total_income += rentals_75pct_gross_monthly(p.get("gross_rents_annual", 0.0))
+            total_income += 0.75 * float(p.get("subject_market_rent", 0.0)) - float(p.get("subject_pitia", 0.0))
+    elif t == "Other":
+        total_income += other_income_rows_to_monthly([p])
+policy = scn.get("settings", {}).get("student_loan_policy", "Conventional")
+other_debts = debts_monthly_total(scn.get("debt_cards", []), policy)
+FE, BE = dti(comp["PITIA"], other_debts, total_income)
+summary = {
+    "TotalIncome": total_income,
+    "PITIA": comp["PITIA"],
+    "OtherDebts": other_debts,
+    "FE": FE,
+    "BE": BE,
+    "FE_target": st.session_state.get("fe_target", 0.31),
+    "BE_target": st.session_state.get("be_target", 0.43),
+}
+checklist = document_checklist(scn.get("income_cards", []))
 render_bottombar(st.session_state["bottombar_visible"], summary, checklist)
 if not st.session_state["bottombar_visible"]:
     if st.button("\u25b2", key="bottombar_show"):
-          show_bottombar()
-          st.rerun()
-st.write("---")
-if st.button("Open Dashboard"):
-    flags={"k1_gate_ok": all((p.get("payload",{}).get("verified_distributions") or p.get("payload",{}).get("analyzed_liquidity")) for p in scn["income_cards"] if p.get("type")=="K-1") if any(p.get("type")=="K-1" for p in scn["income_cards"]) else True,
-           "c1120_all_100pct": all(p.get("payload",{}).get("ownership_pct",100.0)>=100.0 for p in scn["income_cards"] if p.get("type")=="1120") if any(p.get("type")=="1120" for p in scn["income_cards"]) else True,
-           "support_continuance_ok": all(p.get("payload",{}).get("continuance_3yr",True) for p in scn["income_cards"] if p.get("type")=="Other" and p.get("payload",{}).get("type") in ["Alimony","Child Support","Housing Allowance"]) if any(p.get("type")=="Other" for p in scn["income_cards"]) else True,
-           "rental_method_conflict": False, "rental_negative": False,
-           "high_ltv_cap": comp["LTV"]>97.0 and h["program"]=="Conventional",
-           "property_sanity_warn": (h["tax_rate_pct"]<0.5 or h["tax_rate_pct"]>3.0 or h["hoi_annual"]<600 or h["hoi_annual"]>6000),
-           "debt_lt_10_excluded": any(d.get("exclude_lt_10") and (d.get("remaining_payments") or 0)<10 for d in scn["debt_cards"]),
-           "debt_payoff": any(d.get("pay_off_at_close") for d in scn["debt_cards"]),
-           "sl_policy_applied": any(d.get("type")=="student_loan" for d in scn["debt_cards"])}
-    from ui.tabs_dashboard import render_dashboard as _render_dashboard
-    rules=_render_dashboard(summary, flags, checklist, st.session_state["scenario_name"])
-    from export.pdf_export import build_prequal_pdf
-    critical=any(r.get("severity")=="critical" for r in rules); override=None
-    if critical: override=st.text_area("Override reason to export anyway")
-    if (not critical) or (critical and override):
-        if st.button("Export PDF"):
-            import tempfile, os
-            tmp=tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-            deal={"Scenario":st.session_state["scenario_name"],"Program":h["program"],"Rate":h["rate_pct"],"TermYears":h["term_years"],"PurchasePrice":h["purchase_price"],"BaseLoan":comp["BaseLoan"],"AdjustedLoan":comp["AdjustedLoan"],"LTV":comp["LTV"]}
-            build_prequal_pdf(tmp.name, deal, summary, rules, checklist, DISCLAIMER)
-            with open(tmp.name,"rb") as f: st.download_button("Download PDF", data=f.read(), file_name=f"aimlo_{st.session_state['scenario_name']}.pdf"); os.unlink(tmp.name)
+        show_bottombar()
+        st.experimental_rerun()
+
+# Render drawer last
+render_drawer(scn)

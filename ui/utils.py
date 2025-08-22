@@ -2,10 +2,10 @@
 import streamlit as st
 
 def show_sidebar():
-    st.session_state["sidebar_visible"] = True
+    st.session_state["drawer_open"] = True
 
 def hide_sidebar():
-    st.session_state["sidebar_visible"] = False
+    st.session_state["drawer_open"] = False
 
 def show_bottombar():
     st.session_state["bottombar_visible"] = True
