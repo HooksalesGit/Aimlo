@@ -25,11 +25,11 @@ def render_topbar():
             cols = st.columns([3,1,1,1])
             choose = cols[0].selectbox("Scenario", names, index=idx, key="scenario_select")
             if choose != current:
-                st.session_state["scenario_name"]=choose; st.experimental_rerun()
+                st.session_state["scenario_name"]=choose; st.rerun()
             if cols[1].button("＋", help="New scenario"):
-                base=names[0]; scenarios[f"Scenario {len(names)+1}"] = {**scenarios[base]}; st.session_state["scenario_name"]=f"Scenario {len(names)+1}"; st.experimental_rerun()
+                base=names[0]; scenarios[f"Scenario {len(names)+1}"] = {**scenarios[base]}; st.session_state["scenario_name"]=f"Scenario {len(names)+1}"; st.rerun()
             if cols[2].button("⧉", help="Duplicate current"):
-                import copy; scenarios[current + " (copy)"] = copy.deepcopy(scenarios[current]); st.session_state["scenario_name"]=current + " (copy)"; st.experimental_rerun()
+                import copy; scenarios[current + " (copy)"] = copy.deepcopy(scenarios[current]); st.session_state["scenario_name"]=current + " (copy)"; st.rerun()
             if cols[3].button("🗑", help="Delete current"):
-                if len(scenarios)>1: scenarios.pop(current, None); st.session_state["scenario_name"]=list(scenarios.keys())[0]; st.experimental_rerun()
+                if len(scenarios)>1: scenarios.pop(current, None); st.session_state["scenario_name"]=list(scenarios.keys())[0]; st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)

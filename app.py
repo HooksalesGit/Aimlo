@@ -33,13 +33,13 @@ render_topbar()
 if st.session_state.get("sidebar_visible", True):
     if st.button("\u25c0", key="sidebar_hide"):
         hide_sidebar()
-        st.experimental_rerun()
+        st.rerun()
     cols = st.columns([2,5,3], gap="medium")
     left, main, right = cols[0], cols[1], cols[2]
 else:
     if st.button("\u25b6", key="sidebar_show"):
         show_sidebar()
-        st.experimental_rerun()
+        st.rerun()
     cols = st.columns([7,3], gap="medium")
     left, main, right = None, cols[0], cols[1]
 colors = THEME["colors"]
@@ -112,8 +112,8 @@ checklist=document_checklist(scn["income_cards"])
 render_bottombar(st.session_state["bottombar_visible"], summary, checklist)
 if not st.session_state["bottombar_visible"]:
     if st.button("\u25b2", key="bottombar_show"):
-        show_bottombar()
-        st.experimental_rerun()
+          show_bottombar()
+          st.rerun()
 st.write("---")
 if st.button("Open Dashboard"):
     flags={"k1_gate_ok": all((p.get("payload",{}).get("verified_distributions") or p.get("payload",{}).get("analyzed_liquidity")) for p in scn["income_cards"] if p.get("type")=="K-1") if any(p.get("type")=="K-1" for p in scn["income_cards"]) else True,
