@@ -42,45 +42,43 @@ st.markdown(
 )
 
 # Toggle button to show/hide sidebar
-st.markdown("<div class='sidebar-toggle'>", unsafe_allow_html=True)
 if sidebar_visible:
-    if st.button("\u25c0", key="sidebar_hide"):
+    if st.button("Hide sidebar", key="sidebar_hide"):
         hide_sidebar(); st.rerun()
 else:
-    if st.button("\u25b6", key="sidebar_show"):
+    if st.button("Show sidebar", key="sidebar_show"):
         show_sidebar(); st.rerun()
-st.markdown("</div>", unsafe_allow_html=True)
 
 scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
-if sidebar_visible:
-    st.markdown("<div class='fixed-sidebar'>", unsafe_allow_html=True)
-    st.markdown("<div class='data'>", unsafe_allow_html=True)
-    st.subheader("Data entry")
-    render_sidebar(st.session_state.get("selected"), scn, warnings=[])
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("<div class='disc'>", unsafe_allow_html=True)
-    st.subheader("Disclosures")
-    render_guidance_center(scn, warnings=[])
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div class='main-area'>", unsafe_allow_html=True)
-col_main, right = st.columns([5,3], gap="medium")
-with col_main:
-    col_income, col_debt = st.columns(2)
-    with col_income:
-        st.markdown("<div class='scroll-income'>", unsafe_allow_html=True)
-        render_income_column(scn)
-        st.markdown("</div>", unsafe_allow_html=True)
-    with col_debt:
-        st.markdown("<div class='scroll-debt'>", unsafe_allow_html=True)
-        render_debt_column(scn)
-        st.markdown("</div>", unsafe_allow_html=True)
-with right:
-    st.markdown("<div class='scroll-prop'>", unsafe_allow_html=True)
-    render_property_snapshot(scn)
-    st.markdown("</div>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+if sidebar_visible:
+    col_sidebar, col_content = st.columns([1, 3], gap="medium")
+    with col_sidebar:
+        st.subheader("Data entry")
+        render_sidebar(st.session_state.get("selected"), scn, warnings=[])
+        st.subheader("Disclosures")
+        render_guidance_center(scn, warnings=[])
+    with col_content:
+        col_main, col_prop = st.columns([3, 1])
+        with col_main:
+            col_income, col_debt = st.columns(2)
+            with col_income:
+                render_income_column(scn)
+            with col_debt:
+                render_debt_column(scn)
+        with col_prop:
+            render_property_snapshot(scn)
+else:
+    # Sidebar hidden, main content full width
+    col_main, col_prop = st.columns([3, 1])
+    with col_main:
+        col_income, col_debt = st.columns(2)
+        with col_income:
+            render_income_column(scn)
+        with col_debt:
+            render_debt_column(scn)
+    with col_prop:
+        render_property_snapshot(scn)
 # Compute totals
 h=scn["housing"]
 comp=piti_components(h["purchase_price"],h["down_payment_amt"],h["rate_pct"],h["term_years"],h["tax_rate_pct"],h["hoi_annual"],h["hoa_monthly"],h["program"],h["finance_upfront"])
