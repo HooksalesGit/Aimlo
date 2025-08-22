@@ -1,6 +1,7 @@
 import streamlit as st
 from core import presets as P
 from core.version import __version__
+from ui.utils import show_sidebar
 def render_topbar():
     st.markdown("""<style>.topbar{position:sticky;top:0;z-index:999;background:var(--background-color);padding:6px 6px;border-bottom:1px solid #eee}</style>""", unsafe_allow_html=True)
     with st.container():
@@ -10,10 +11,16 @@ def render_topbar():
             st.markdown(f"### Aimlo — v{__version__}")
         with c2:
             scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
-            for bid in sorted(scn.get("borrowers", {})):
-                scn["borrowers"][bid] = st.text_input(
-                    f"Borrower {bid}", value=scn["borrowers"].get(bid, f"Borrower {bid}"), key=f"tb_br_{bid}"
-                )
+            borrowers = scn.get("borrowers", {})
+            ids = sorted(borrowers)
+            names = [f"{borrowers[b].get('first_name','')} {borrowers[b].get('last_name','')}".strip() or f"Borrower {b}" for b in ids]
+            id_map = dict(zip(ids, names))
+            current_id = st.session_state.get("selected_borrower", ids[0] if ids else None)
+            current_name = id_map.get(current_id, names[0] if names else "")
+            chosen = st.selectbox("Borrower", names, index=names.index(current_name), key="tb_br_select")
+            st.session_state["selected_borrower"] = next((bid for bid, nm in id_map.items() if nm == chosen), current_id)
+            if st.button("Borrowers", key="tb_br_manage"):
+                show_sidebar(); st.session_state["selected"] = {"kind": "borrowers"}; st.rerun()
         with c3:
             colA,colB,colC=st.columns(3)
             program_options=list(P.PROGRAM_PRESETS.keys())

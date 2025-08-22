@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Initial project scaffolding and mandatory metadata files.
-- Borrower names editable from top bar with dropdown selection on entry cards.
+- Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
