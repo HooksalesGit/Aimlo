@@ -2,6 +2,7 @@
 import streamlit as st
 import yaml
 from pathlib import Path
+from core.presets import DISCLAIMER
 
 _HINTS_CACHE = None
 
@@ -14,7 +15,14 @@ def _load_hints():
 
 def render_disclosures(warnings):
     hints = _load_hints()
-    guides_tab, warn_tab, where_tab = st.tabs(["Guides", "Warnings", "Where to find"])
+    disc_tab, guides_tab, warn_tab, where_tab = st.tabs([
+        "Disclosures",
+        "Guides",
+        "Warnings",
+        "Where to find",
+    ])
+    with disc_tab:
+        st.caption(DISCLAIMER)
     with guides_tab:
         if not hints:
             st.info("No guides available.")

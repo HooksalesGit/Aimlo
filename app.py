@@ -17,7 +17,6 @@ from core.calculators import (
     rentals_75pct_gross_monthly,
     other_income_rows_to_monthly,
 )
-from core.checklist import document_checklist
 
 st.set_page_config(page_title="Aimlo", layout="wide")
 if "scenarios" not in st.session_state:
@@ -25,7 +24,7 @@ if "scenarios" not in st.session_state:
     st.session_state["scenario_name"] = "Default"
 st.session_state.setdefault("drawer_open", False)
 st.session_state.setdefault("active_editor", None)
-st.session_state.setdefault("bottombar_visible", True)
+st.session_state.setdefault("bottombar_visible", False)
 
 render_topbar()
 scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
@@ -77,8 +76,7 @@ summary = {
     "FE_target": st.session_state.get("fe_target", 0.31),
     "BE_target": st.session_state.get("be_target", 0.43),
 }
-checklist = document_checklist(scn.get("income_cards", []))
-render_bottombar(st.session_state["bottombar_visible"], summary, checklist)
+render_bottombar(st.session_state["bottombar_visible"], summary)
 if not st.session_state["bottombar_visible"]:
     if st.button("\u25b2", key="bottombar_show"):
         show_bottombar()

@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
-- Drawer sidebar and three-column layout.
+- Compact bottom summary drawer with snapshot totals.
 - Initial project scaffolding and mandatory metadata files.
 - Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
 
@@ -16,6 +16,6 @@ All notable changes to this project will be documented in this file.
 - Missing income cards and overflowing disclosure box by restructuring layout with Streamlit columns.
 
 ### Changed
-- Main view uses new wireframe with drawer.
-- Sidebar redesigned as fixed-width full-height panel with bottom disclosures box.
+- Removed left data-entry column; main grid shows income, debts, and property boxes only.
+- All data entry forms open in an overlay drawer with disclosures and guides.
 

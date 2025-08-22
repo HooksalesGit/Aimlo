@@ -1,9 +1,17 @@
 import streamlit as st
-from ui.sidebar_editor import render_guidance_center
+from ui.disclosures import render_disclosures
 
-def test_guidance_center_disclosures(monkeypatch):
+
+def test_disclosures_tab(monkeypatch):
     outputs = []
-    monkeypatch.setattr(st, 'segmented_control', lambda label, opts, key=None: 'Disclosures')
+    def fake_tabs(options):
+        class Dummy:
+            def __enter__(self):
+                return None
+            def __exit__(self, exc_type, exc, tb):
+                return False
+        return Dummy(), Dummy(), Dummy(), Dummy()
+    monkeypatch.setattr(st, 'tabs', lambda opts: fake_tabs(opts))
     monkeypatch.setattr(st, 'caption', lambda msg: outputs.append(msg))
-    render_guidance_center({}, warnings=[])
+    render_disclosures([])
     assert outputs, 'disclosure text should be rendered'
