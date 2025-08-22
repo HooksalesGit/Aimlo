@@ -3,6 +3,7 @@ from ui.topbar import render_topbar
 from ui.layout import render_income_column, render_debt_column, render_property_snapshot
 from ui.bottombar import render_bottombar
 from ui.tabs_dashboard import render_dashboard
+from ui.sidebar_editor import render_sidebar, render_guidance_center
 from core.scenarios import default_scenario
 from core.calculators import (
     piti_components,
@@ -17,6 +18,7 @@ from core.calculators import (
     other_income_rows_to_monthly,
 )
 from core.presets import DISCLAIMER
+from core.checklist import document_checklist
 st.set_page_config(page_title="Aimlo", layout="wide")
 if "scenarios" not in st.session_state:
     st.session_state["scenarios"]={"Default": default_scenario()}
@@ -32,20 +34,35 @@ if st.session_state.get("sidebar_visible", True):
 else:
     cols = st.columns([7,3], gap="medium")
     left, main, right = None, cols[0], cols[1]
+st.markdown(
+    "<style>.scroll-data{max-height:300px;overflow-y:auto;} .scroll-disc{max-height:200px;overflow-y:auto;} .scroll-income{max-height:400px;overflow-y:auto;} .scroll-debt{max-height:400px;overflow-y:auto;} .scroll-prop{max-height:400px;overflow-y:auto;}</style>",
+    unsafe_allow_html=True,
+)
 scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
 if left is not None:
     with left:
         st.subheader("Data entry")
-        from ui.sidebar_editor import render_sidebar as _render_sidebar
-        _render_sidebar(st.session_state.get("selected"), scn, warnings=[])
+        st.markdown("<div class='scroll-data'>", unsafe_allow_html=True)
+        render_sidebar(st.session_state.get("selected"), scn, warnings=[])
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.subheader("Disclosures")
+        st.markdown("<div class='scroll-disc'>", unsafe_allow_html=True)
+        render_guidance_center(scn, warnings=[])
+        st.markdown("</div>", unsafe_allow_html=True)
 with main:
     col_income, col_debt = st.columns(2)
     with col_income:
+        st.markdown("<div class='scroll-income'>", unsafe_allow_html=True)
         render_income_column(scn)
+        st.markdown("</div>", unsafe_allow_html=True)
     with col_debt:
+        st.markdown("<div class='scroll-debt'>", unsafe_allow_html=True)
         render_debt_column(scn)
+        st.markdown("</div>", unsafe_allow_html=True)
 with right:
+    st.markdown("<div class='scroll-prop'>", unsafe_allow_html=True)
     render_property_snapshot(scn)
+    st.markdown("</div>", unsafe_allow_html=True)
 # Compute totals
 h=scn["housing"]
 comp=piti_components(h["purchase_price"],h["down_payment_amt"],h["rate_pct"],h["term_years"],h["tax_rate_pct"],h["hoi_annual"],h["hoa_monthly"],h["program"],h["finance_upfront"])
@@ -64,7 +81,8 @@ policy = scn.get("settings",{}).get("student_loan_policy","Conventional")
 other_debts = debts_monthly_total(scn["debt_cards"], policy)
 FE,BE=dti(comp["PITIA"], other_debts, total_income)
 summary={"TotalIncome":total_income,"PITIA":comp["PITIA"],"OtherDebts":other_debts,"FE":FE,"BE":BE,"FE_target":st.session_state.get("fe_target",0.31),"BE_target":st.session_state.get("be_target",0.43)}
-render_bottombar(st.session_state["bottombar_visible"], summary)
+checklist=document_checklist(scn["income_cards"])
+render_bottombar(st.session_state["bottombar_visible"], summary, checklist)
 st.write("---")
 if st.button("Open Dashboard"):
     flags={"k1_gate_ok": all((p.get("payload",{}).get("verified_distributions") or p.get("payload",{}).get("analyzed_liquidity")) for p in scn["income_cards"] if p.get("type")=="K-1") if any(p.get("type")=="K-1" for p in scn["income_cards"]) else True,
@@ -76,13 +94,6 @@ if st.button("Open Dashboard"):
            "debt_lt_10_excluded": any(d.get("exclude_lt_10") and (d.get("remaining_payments") or 0)<10 for d in scn["debt_cards"]),
            "debt_payoff": any(d.get("pay_off_at_close") for d in scn["debt_cards"]),
            "sl_policy_applied": any(d.get("type")=="student_loan" for d in scn["debt_cards"])}
-    checklist=[]; types=[c["type"] for c in scn["income_cards"]]
-    if "W-2" in types: checklist+=["30 days paystubs","2 years W-2s","VOE"]
-    if "Schedule C" in types: checklist+=["1040s (2 years) incl. Sch C","Proof of business activity"]
-    if "K-1" in types: checklist+=["K-1s (2 years)","Distribution history or liquidity analysis"]
-    if "1120" in types: checklist+=["1120 returns (2 years)"]
-    if "Rental" in types: checklist+=["Schedule E or lease/market rent docs"]
-    if any(c.get("payload",{}).get("type") in ["Alimony","Child Support","Housing Allowance"] for c in scn["income_cards"] if c.get("type")=="Other"): checklist+=["Court order and proof of 3-year continuance"]
     from ui.tabs_dashboard import render_dashboard as _render_dashboard
     rules=_render_dashboard(summary, flags, checklist, st.session_state["scenario_name"])
     from export.pdf_export import build_prequal_pdf
