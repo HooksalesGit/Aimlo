@@ -4,3 +4,23 @@ example_field:
   label: "Example Field"
   where: "Example document"
   definition: "Short description of the field."
+
+borrower_first_name:
+  label: "First name"
+  where: "Borrower application"
+  definition: "Borrower's given name."
+
+borrower_last_name:
+  label: "Last name"
+  where: "Borrower application"
+  definition: "Borrower's family name."
+
+borrower_phone:
+  label: "Phone number"
+  where: "Contact information"
+  definition: "Primary phone to reach the borrower."
+
+borrower_credit_score:
+  label: "Estimated credit score"
+  where: "Credit report"
+  definition: "Approximate FICO or similar score."

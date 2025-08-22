@@ -47,6 +47,22 @@ def render_guidance_center(scn, warnings):
             st.write(f"**{typ}**")
             for f, desc in fmap.items():
                 st.caption(f"- {f}: {desc}")
+
+def render_borrowers_editor(scn):
+    st.subheader("Borrowers")
+    if st.button("Add borrower", key="br_add"):
+        next_id = max(scn.get("borrowers", {}).keys(), default=0) + 1
+        scn.setdefault("borrowers", {})[next_id] = {"first_name": "", "last_name": "", "phone": "", "credit_score": 0}
+        st.rerun()
+    for bid in sorted(scn.get("borrowers", {})):
+        br = scn["borrowers"][bid]
+        with st.expander(f"Borrower {bid}", expanded=True):
+            br["first_name"] = st.text_input("First name", value=br.get("first_name", ""), key=f"br_fn_{bid}")
+            br["last_name"] = st.text_input("Last name", value=br.get("last_name", ""), key=f"br_ln_{bid}")
+            br["phone"] = st.text_input("Phone number", value=br.get("phone", ""), key=f"br_ph_{bid}")
+            br["credit_score"] = st.number_input(
+                "Estimated credit score", value=float(br.get("credit_score", 0)), min_value=0.0, max_value=850.0, step=1.0, key=f"br_cs_{bid}"
+            )
 def render_income_new(scn):
     typ = st.selectbox("Income type", ["W-2","Schedule C","K-1","1120","Rental","Other"], key="new_income_typ")
     if st.button("Create income card"):
@@ -226,5 +242,7 @@ def render_sidebar(selected, scn, warnings):
         else:
             policy=scn.get("settings",{}).get("student_loan_policy","Conventional")
             render_debt_editor(card, policy)
+    elif selected["kind"]=="borrowers":
+        render_borrowers_editor(scn)
     elif selected["kind"]=="property":
         render_property_editor(scn["housing"])
