@@ -187,3 +187,10 @@ CI must block merges unless all of the following are true:
 - **PATCH**: bug fix, no logic changes that alter outputs.
 - **MINOR**: new feature or UI/UX improvement that does not break API; may alter outputs intentionally (update golden as needed).
 - **MAJOR**: breaking change or large recalculation policy change.
+---
+
+## 16) AI Agent Guidelines
+To streamline collaboration with autonomous agents:
+- Prefer `rg` for code search instead of recursive `grep`.
+- Always run `pytest` after modifying code or docs.
+- Include file and test output citations in PR summaries.
