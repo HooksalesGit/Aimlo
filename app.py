@@ -4,6 +4,8 @@ from ui.layout import render_income_column, render_debt_column, render_property_
 from ui.bottombar import render_bottombar
 from ui.tabs_dashboard import render_dashboard
 from ui.sidebar_editor import render_sidebar, render_guidance_center
+from ui.utils import show_sidebar, hide_sidebar, show_bottombar
+from ui.theme import THEME
 from core.scenarios import default_scenario
 from core.calculators import (
     piti_components,
@@ -29,18 +31,39 @@ st.session_state.setdefault("bottombar_visible", True)
 st.session_state.setdefault("view_mode","Data Entry")
 render_topbar()
 if st.session_state.get("sidebar_visible", True):
+    if st.button("\u25c0", key="sidebar_hide"):
+        hide_sidebar()
+        st.experimental_rerun()
     cols = st.columns([2,5,3], gap="medium")
     left, main, right = cols[0], cols[1], cols[2]
 else:
+    if st.button("\u25b6", key="sidebar_show"):
+        show_sidebar()
+        st.experimental_rerun()
     cols = st.columns([7,3], gap="medium")
     left, main, right = None, cols[0], cols[1]
+colors = THEME["colors"]
+panel_bg = colors.get("panel_bg", "#333333")
+panel_text = colors.get("panel_text", "#ffffff")
 st.markdown(
-    "<style>.scroll-data{max-height:300px;overflow-y:auto;} .scroll-disc{max-height:200px;overflow-y:auto;} .scroll-income{max-height:400px;overflow-y:auto;} .scroll-debt{max-height:400px;overflow-y:auto;} .scroll-prop{max-height:400px;overflow-y:auto;}</style>",
+    f"""
+<style>
+.scroll-data,.scroll-disc,.scroll-income,.scroll-debt,.scroll-prop{{max-height:400px;overflow-y:auto;border:1px solid #ccc;padding:8px;}}
+.scroll-data{{max-height:300px;}}
+.scroll-disc{{max-height:200px;}}
+.sidebar-box{{background:{panel_bg};color:{panel_text};padding:8px;}}
+#sidebar_hide button,#sidebar_show button{{background:{panel_bg};color:{panel_text};border:none;}}
+#sidebar_hide,#sidebar_show{{position:absolute;top:70px;left:0;z-index:1000;}}
+#bottombar_show button{{background:{panel_bg};color:{panel_text};border:none;}}
+#bottombar_show{{position:fixed;bottom:0;right:10px;z-index:1000;}}
+</style>
+""",
     unsafe_allow_html=True,
 )
 scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
 if left is not None:
     with left:
+        st.markdown("<div class='sidebar-box'>", unsafe_allow_html=True)
         st.subheader("Data entry")
         st.markdown("<div class='scroll-data'>", unsafe_allow_html=True)
         render_sidebar(st.session_state.get("selected"), scn, warnings=[])
@@ -48,6 +71,7 @@ if left is not None:
         st.subheader("Disclosures")
         st.markdown("<div class='scroll-disc'>", unsafe_allow_html=True)
         render_guidance_center(scn, warnings=[])
+        st.markdown("</div>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 with main:
     col_income, col_debt = st.columns(2)
@@ -83,6 +107,10 @@ FE,BE=dti(comp["PITIA"], other_debts, total_income)
 summary={"TotalIncome":total_income,"PITIA":comp["PITIA"],"OtherDebts":other_debts,"FE":FE,"BE":BE,"FE_target":st.session_state.get("fe_target",0.31),"BE_target":st.session_state.get("be_target",0.43)}
 checklist=document_checklist(scn["income_cards"])
 render_bottombar(st.session_state["bottombar_visible"], summary, checklist)
+if not st.session_state["bottombar_visible"]:
+    if st.button("\u25b2", key="bottombar_show"):
+        show_bottombar()
+        st.experimental_rerun()
 st.write("---")
 if st.button("Open Dashboard"):
     flags={"k1_gate_ok": all((p.get("payload",{}).get("verified_distributions") or p.get("payload",{}).get("analyzed_liquidity")) for p in scn["income_cards"] if p.get("type")=="K-1") if any(p.get("type")=="K-1" for p in scn["income_cards"]) else True,
