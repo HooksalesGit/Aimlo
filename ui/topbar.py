@@ -5,7 +5,7 @@ def render_topbar():
     with st.container():
         st.markdown("<div class='topbar'>", unsafe_allow_html=True)
         c1,c2,c3 = st.columns([2,5,3])
-        with c1: st.markdown("### AMALO")
+        with c1: st.markdown("### Aimlo")
         with c2:
             colA,colB,colC=st.columns(3)
             program_options=list(P.PROGRAM_PRESETS.keys())

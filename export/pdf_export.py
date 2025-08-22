@@ -7,7 +7,7 @@ def build_prequal_pdf(filename, deal, summary, warnings, checklist, disclaimer):
     c=canvas.Canvas(filename, pagesize=LETTER); w,h=LETTER; y=h-0.75*inch
     def line(txt, size=10, dy=14):
         nonlocal y; c.setFont('Helvetica', size); c.drawString(0.75*inch, y, txt); y-=dy
-    line('AMALO Prequalification Summary',14,18); line(datetime.now().strftime('%Y-%m-%d %H:%M'),9,14); line(' ')
+    line('Aimlo Prequalification Summary',14,18); line(datetime.now().strftime('%Y-%m-%d %H:%M'),9,14); line(' ')
     line('Deal Snapshot',12,16)
     for k in ['Scenario','Program','Rate','TermYears','PurchasePrice','BaseLoan','AdjustedLoan','LTV']: line(f"{k}: {deal.get(k,'')}")
     line(' '); line('Income & DTI',12,16)

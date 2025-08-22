@@ -1,4 +1,4 @@
-# AMALO v2 — Mortgage Income & DTI Dashboard
+# Aimlo — Mortgage Income & DTI Dashboard
 **Built:** 2025-08-21
 
 - Thin top bar (program & targets, scenario selector)

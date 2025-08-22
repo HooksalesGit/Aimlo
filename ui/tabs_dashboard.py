@@ -20,9 +20,9 @@ def render_dashboard(summary: dict, flags: dict, checklist: list, scenario_name:
     st.write('---')
     st.caption(DISCLAIMER)
     st.subheader("Exports")
-    st.download_button("Download scenario JSON", data=json.dumps({"summary":summary,"flags":flags,"checklist":checklist}, indent=2).encode("utf-8"), file_name=f"amalo_{scenario_name}.json", mime="application/json")
+    st.download_button("Download scenario JSON", data=json.dumps({"summary":summary,"flags":flags,"checklist":checklist}, indent=2).encode("utf-8"), file_name=f"aimlo_{scenario_name}.json", mime="application/json")
     csv_buf=io.StringIO(); w=csv.writer(csv_buf)
     w.writerow(["Scenario","TotalIncome","PITIA","OtherDebts","FE","BE"])
     w.writerow([scenario_name, summary.get("TotalIncome",0.0), summary.get("PITIA",0.0), summary.get("OtherDebts",0.0), summary.get("FE",0.0), summary.get("BE",0.0)])
-    st.download_button("Download CSV Summary", data=csv_buf.getvalue().encode("utf-8"), file_name=f"amalo_{scenario_name}.csv", mime="text/csv")
+    st.download_button("Download CSV Summary", data=csv_buf.getvalue().encode("utf-8"), file_name=f"aimlo_{scenario_name}.csv", mime="text/csv")
     return rules
