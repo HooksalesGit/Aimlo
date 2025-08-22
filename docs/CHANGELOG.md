@@ -12,4 +12,5 @@ All notable changes to this project will be documented in this file.
 - Scrollable container layout with bottom bar document checklist.
 
 - Sidebar and bottom bar toggle arrows with dark gray styling.
+- Sidebar headers now appear inside their bordered boxes for clearer grouping.
 

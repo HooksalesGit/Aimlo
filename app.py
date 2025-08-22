@@ -48,10 +48,10 @@ panel_text = colors.get("panel_text", "#ffffff")
 st.markdown(
     f"""
 <style>
-.scroll-data,.scroll-disc,.scroll-income,.scroll-debt,.scroll-prop{{max-height:400px;overflow-y:auto;border:1px solid #ccc;padding:8px;}}
-.scroll-data{{max-height:300px;}}
-.scroll-disc{{max-height:200px;}}
-.sidebar-box{{background:{panel_bg};color:{panel_text};padding:8px;}}
+.scroll-income,.scroll-debt,.scroll-prop{{max-height:400px;overflow-y:auto;border:1px solid #ccc;padding:8px;}}
+.scroll-data{{max-height:300px;overflow-y:auto;}}
+.scroll-disc{{max-height:200px;overflow-y:auto;}}
+.sidebar-box{{background:{panel_bg};color:{panel_text};padding:8px;border:1px solid #ccc;margin-bottom:8px;}}
 #sidebar_hide button,#sidebar_show button{{background:{panel_bg};color:{panel_text};border:none;}}
 #sidebar_hide,#sidebar_show{{position:absolute;top:70px;left:0;z-index:1000;}}
 #bottombar_show button{{background:{panel_bg};color:{panel_text};border:none;}}
@@ -68,6 +68,9 @@ if left is not None:
         st.markdown("<div class='scroll-data'>", unsafe_allow_html=True)
         render_sidebar(st.session_state.get("selected"), scn, warnings=[])
         st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div class='sidebar-box'>", unsafe_allow_html=True)
         st.subheader("Disclosures")
         st.markdown("<div class='scroll-disc'>", unsafe_allow_html=True)
         render_guidance_center(scn, warnings=[])
