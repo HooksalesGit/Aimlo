@@ -9,8 +9,14 @@ def render_bottombar(open_state, summary):
     border = colors.get("border", "#eee")
     transition = THEME["drawer"]["transition_ms"]
 
-    fe, be = summary.get("FE", 0.0), summary.get("BE", 0.0)
-    fe_t, be_t = summary.get("FE_target", 1.0), summary.get("BE_target", 1.0)
+    def _num(val, default=0.0):
+        try:
+            return float(val)
+        except (TypeError, ValueError):
+            return default
+
+    fe, be = _num(summary.get("FE")), _num(summary.get("BE"))
+    fe_t, be_t = _num(summary.get("FE_target", 1.0), 1.0), _num(summary.get("BE_target", 1.0), 1.0)
     fe_ok = fe <= fe_t
     be_ok = be <= be_t
 
