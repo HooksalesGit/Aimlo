@@ -4,9 +4,9 @@ from ui.utils import show_sidebar, hide_sidebar, show_bottombar, hide_bottombar
 def test_sidebar_toggle():
     st.session_state.clear()
     show_sidebar()
-    assert st.session_state["sidebar_visible"] is True
+    assert st.session_state["drawer_open"] is True
     hide_sidebar()
-    assert st.session_state["sidebar_visible"] is False
+    assert st.session_state["drawer_open"] is False
 
 def test_bottombar_toggle():
     st.session_state.clear()

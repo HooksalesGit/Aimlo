@@ -5,9 +5,9 @@ def test_visibility_sequence():
     st.session_state.clear()
     show_sidebar()
     show_bottombar()
-    assert st.session_state["sidebar_visible"]
+    assert st.session_state["drawer_open"]
     assert st.session_state["bottombar_visible"]
     hide_sidebar()
     hide_bottombar()
-    assert not st.session_state["sidebar_visible"]
+    assert not st.session_state["drawer_open"]
     assert not st.session_state["bottombar_visible"]

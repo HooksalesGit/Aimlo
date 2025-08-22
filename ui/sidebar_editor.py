@@ -1,4 +1,6 @@
 import streamlit as st, uuid
+from ui.disclosures import render_disclosures
+from ui.theme import THEME
 from core.calculators import (
     w2_row_to_monthly, schc_rows_to_monthly, k1_rows_to_monthly, c1120_rows_to_monthly,
     rentals_schedule_e_monthly, rentals_75pct_gross_monthly, other_income_rows_to_monthly
@@ -221,28 +223,56 @@ def render_property_editor(h):
     h["finance_upfront"]=st.checkbox("Finance upfront fee (FHA/VA/USDA)", value=bool(h.get("finance_upfront",False)))
     st.markdown("---"); st.markdown("### Program Tables (MI/MIP/Fees)"); st.caption("Edit defaults as needed (Conventional MI bands, FHA/VA/USDA upfront & annual).")
     st.json({"Conventional_MI_bands":CONV_MI_BANDS,"FHA":FHA_TABLE,"VA":VA_TABLE,"USDA":USDA_TABLE})
-def render_sidebar(selected, scn, warnings):
-    if selected is None or selected.get("kind") is None:
-        st.info("Select an item to edit from the main panel.")
+def render_context_form(active, scn, warnings):
+    if active is None or active.get("kind") is None:
+        render_disclosures(warnings)
         return
-    if selected["kind"]=="income_new":
+    if active["kind"]=="income_new":
         render_income_new(scn)
-    elif selected["kind"]=="debt_new":
+    elif active["kind"]=="debt_new":
         render_debt_new(scn)
-    elif selected["kind"]=="income":
-        card=next((x for x in scn["income_cards"] if x["id"]==selected["id"]), None)
+    elif active["kind"]=="income":
+        card=next((x for x in scn["income_cards"] if x["id"]==active["id"]), None)
         if not card:
             st.info("No card found.")
         else:
             render_income_editor(card)
-    elif selected["kind"]=="debt":
-        card=next((x for x in scn["debt_cards"] if x["id"]==selected["id"]), None)
+    elif active["kind"]=="debt":
+        card=next((x for x in scn["debt_cards"] if x["id"]==active["id"]), None)
         if not card:
             st.info("No debt found.")
         else:
             policy=scn.get("settings",{}).get("student_loan_policy","Conventional")
             render_debt_editor(card, policy)
-    elif selected["kind"]=="borrowers":
+    elif active["kind"]=="borrowers":
         render_borrowers_editor(scn)
-    elif selected["kind"]=="property":
+    elif active["kind"]=="property":
         render_property_editor(scn["housing"])
+
+def render_drawer(scn, warnings=None):
+    warnings = warnings or []
+    cfg = THEME["drawer"]
+    width = cfg["drawer_width"]
+    overlay = cfg["overlay_rgba"]
+    transition = cfg["transition_ms"]
+    open_state = st.session_state.get("drawer_open", False)
+    st.markdown(
+        f"""
+    <style>
+    .drawer{{position:fixed;top:0;left:0;bottom:0;width:{width}px;background:#fff;padding:16px;box-shadow:0 0 10px rgba(0,0,0,.3);transform:translateX(-100%);transition:transform {transition}ms;z-index:1000;overflow-y:auto;}}
+    .drawer.open{{transform:translateX(0);}}
+    .drawer-overlay{{position:fixed;top:0;left:0;right:0;bottom:0;background:{overlay};z-index:999;}}
+    </style>
+    """,
+        unsafe_allow_html=True,
+    )
+    if open_state:
+        st.markdown("<div class='drawer-overlay'></div>", unsafe_allow_html=True)
+    classes = "drawer open" if open_state else "drawer"
+    st.markdown(f"<div class='{classes}'>", unsafe_allow_html=True)
+    if st.button("Hide sidebar", key="hide_sidebar"):
+        st.session_state["drawer_open"] = False
+        st.session_state["active_editor"] = None
+        st.experimental_rerun()
+    render_context_form(st.session_state.get("active_editor"), scn, warnings)
+    st.markdown("</div>", unsafe_allow_html=True)

@@ -1,14 +1,14 @@
 import streamlit as st
 from core import presets as P
 from core.version import __version__
-from ui.utils import show_sidebar
+
 def render_topbar():
     st.markdown("""<style>.topbar{position:sticky;top:0;z-index:999;background:var(--background-color);padding:6px 6px;border-bottom:1px solid #eee}</style>""", unsafe_allow_html=True)
     with st.container():
         st.markdown("<div class='topbar'>", unsafe_allow_html=True)
         c1,c2,c3,c4 = st.columns([2,3,5,3])
         with c1:
-            st.markdown(f"### Aimlo — v{__version__}")
+            st.markdown(f"### AMALO — v{__version__}")
         with c2:
             scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
             borrowers = scn.get("borrowers", {})
@@ -20,7 +20,9 @@ def render_topbar():
             chosen = st.selectbox("Borrower", names, index=names.index(current_name), key="tb_br_select")
             st.session_state["selected_borrower"] = next((bid for bid, nm in id_map.items() if nm == chosen), current_id)
             if st.button("Borrowers", key="tb_br_manage"):
-                show_sidebar(); st.session_state["selected"] = {"kind": "borrowers"}; st.rerun()
+                st.session_state["active_editor"] = {"kind": "borrowers", "id": None}
+                st.session_state["drawer_open"] = True
+                st.rerun()
         with c3:
             colA,colB,colC=st.columns(3)
             program_options=list(P.PROGRAM_PRESETS.keys())
