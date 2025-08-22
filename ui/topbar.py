@@ -1,12 +1,20 @@
 import streamlit as st
 from core import presets as P
+from core.version import __version__
 def render_topbar():
     st.markdown("""<style>.topbar{position:sticky;top:0;z-index:999;background:var(--background-color);padding:6px 6px;border-bottom:1px solid #eee}</style>""", unsafe_allow_html=True)
     with st.container():
         st.markdown("<div class='topbar'>", unsafe_allow_html=True)
-        c1,c2,c3 = st.columns([2,5,3])
-        with c1: st.markdown("### Aimlo")
+        c1,c2,c3,c4 = st.columns([2,3,5,3])
+        with c1:
+            st.markdown(f"### Aimlo — v{__version__}")
         with c2:
+            scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
+            for bid in sorted(scn.get("borrowers", {})):
+                scn["borrowers"][bid] = st.text_input(
+                    f"Borrower {bid}", value=scn["borrowers"].get(bid, f"Borrower {bid}"), key=f"tb_br_{bid}"
+                )
+        with c3:
             colA,colB,colC=st.columns(3)
             program_options=list(P.PROGRAM_PRESETS.keys())
             default_program=st.session_state.get("program", program_options[0])
@@ -18,7 +26,7 @@ def render_topbar():
             st.session_state.setdefault("fe_target", fe_default); st.session_state.setdefault("be_target", be_default)
             st.session_state["fe_target"]=colB.number_input("FE Target", value=float(st.session_state["fe_target"]), min_value=0.0, max_value=1.0, step=0.01)
             st.session_state["be_target"]=colC.number_input("BE Target", value=float(st.session_state["be_target"]), min_value=0.0, max_value=1.0, step=0.01)
-        with c3:
+        with c4:
             scenarios = st.session_state["scenarios"]; names = list(scenarios.keys())
             current = st.session_state.get("scenario_name", names[0])
             idx = names.index(current) if current in names else 0

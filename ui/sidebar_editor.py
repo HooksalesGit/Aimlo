@@ -3,6 +3,7 @@ from core.calculators import (
     w2_row_to_monthly, schc_rows_to_monthly, k1_rows_to_monthly, c1120_rows_to_monthly,
     rentals_schedule_e_monthly, rentals_75pct_gross_monthly, other_income_rows_to_monthly
 )
+from ui.utils import borrower_selectbox
 from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE, DISCLAIMER
 
 HELP_MAP={
@@ -68,7 +69,7 @@ def render_debt_new(scn):
         st.session_state["selected"]={"kind":"debt","id":cid}; st.rerun()
 def render_income_editor(card):
     t=card["type"]; p=card["payload"]
-    st.number_input("Borrower ID (1-6)", value=int(p.get("borrower_id",1)), min_value=1, max_value=6, step=1, key=f"ed_bid_{card['id']}")
+    p["borrower_id"] = borrower_selectbox("Borrower", int(p.get("borrower_id",1)), key=f"ed_bid_{card['id']}")
     if t=="W-2":
         p["employer"]=st.text_input("Employer", value=p.get("employer",""))
         pt=st.radio("Pay Type", ["Salary","Hourly"], index=0 if p.get("pay_type","Salary")=="Salary" else 1, horizontal=True); p["pay_type"]=pt
@@ -178,6 +179,7 @@ def render_income_editor(card):
         st.caption(f"Monthly preview: ${other_income_rows_to_monthly([p]):,.2f}")
 def render_debt_editor(card, policy):
     d=card
+    d["borrower_id"] = borrower_selectbox("Borrower", int(d.get("borrower_id",1)), key=f"deb_bid_{d['id']}")
     d["type"]=st.selectbox("Type", ["installment","revolving","student_loan","support"], index=["installment","revolving","student_loan","support"].index(d.get("type","installment")))
     d["name"]=st.text_input("Name/Description", value=d.get("name",""))
     c1,c2=st.columns(2)

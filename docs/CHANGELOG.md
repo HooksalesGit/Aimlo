@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Initial project scaffolding and mandatory metadata files.
+- Borrower names editable from top bar with dropdown selection on entry cards.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
