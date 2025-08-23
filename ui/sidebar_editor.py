@@ -251,7 +251,11 @@ def render_drawer(scn, warnings=None):
     if open_state:
         css += f"background:{bg};color:{text};}}</style>"
     else:
-        css += "display:none;}}</style><style>div[data-testid='collapsedControl']{display:none;}</style>"
+        css += (
+            "display:none;}}</style>"
+            "<style>div[data-testid='collapsedControl']{display:none;}</style>"
+            "<style>div[data-testid='stAppViewContainer']{margin-left:0;}</style>"
+        )
     st.markdown(css, unsafe_allow_html=True)
 
     with st.sidebar:
