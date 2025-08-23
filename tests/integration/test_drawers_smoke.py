@@ -12,7 +12,7 @@ def test_drawers_smoke():
     show_bottombar()
 
     assert st.session_state["drawer_open"] is True
-    assert st.session_state["bottombar_visible"] is False
+    assert st.session_state["bottombar_visible"] is True
     hide_sidebar()
     hide_bottombar()
     assert st.session_state["drawer_open"] is False

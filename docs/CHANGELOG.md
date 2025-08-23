@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Compact bottom summary drawer with snapshot totals.
 - Initial project scaffolding and mandatory metadata files.
 - Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
+- Arrow toggle on sidebar header to open and close the drawer.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.

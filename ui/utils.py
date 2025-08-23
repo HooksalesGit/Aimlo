@@ -7,6 +7,9 @@ def show_sidebar():
 def hide_sidebar():
     st.session_state["drawer_open"] = False
 
+def toggle_sidebar():
+    st.session_state["drawer_open"] = not st.session_state.get("drawer_open", False)
+
 def show_bottombar():
     st.session_state["bottombar_visible"] = True
 

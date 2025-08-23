@@ -5,7 +5,7 @@ from core.calculators import (
     w2_row_to_monthly, schc_rows_to_monthly, k1_rows_to_monthly, c1120_rows_to_monthly,
     rentals_schedule_e_monthly, rentals_75pct_gross_monthly, other_income_rows_to_monthly
 )
-from ui.utils import borrower_selectbox
+from ui.utils import borrower_selectbox, toggle_sidebar
 from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE
 from ui.cards_income import render_income_board
 from ui.cards_debts import render_debt_board
@@ -242,6 +242,22 @@ def render_drawer(scn, warnings=None):
     text = colors.get("panel_text", "#fff")
     border = colors.get("border", "#333")
     open_state = st.session_state.get("drawer_open", False)
+    toggle_left = width if open_state else 0
+    st.markdown(
+        f"""
+    <style>
+    #drawer_toggle{{position:fixed;top:70px;left:{toggle_left}px;z-index:1001;}}
+    #drawer_toggle button{{background:{bg};color:{text};border:none;}}
+    </style>
+    """,
+        unsafe_allow_html=True,
+    )
+    st.markdown("<div id='drawer_toggle'>", unsafe_allow_html=True)
+    arrow = "\u2190" if open_state else "\u2192"
+    if st.button(arrow, key="drawer_toggle_btn"):
+        toggle_sidebar()
+        st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
     st.markdown(
         f"""
     <style>
