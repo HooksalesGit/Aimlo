@@ -46,8 +46,9 @@ def render_income_new(scn):
           "Rental":{"borrower_id":1,"method":"Schedule E","lines":[{"id":_id(),"borrower_id":1,"property":"","year":2024,"rents":0.0,"expenses":0.0,"depreciation":0.0}],"gross_rents_annual":0.0,"subject_market_rent":0.0,"subject_pitia":0.0},
           "Other":{"borrower_id":1,"type":"Social Security","gross_monthly":0.0,"gross_up_pct":0.0,"continuance_3yr":False},
         }
-        scn["income_cards"].append({"id":cid,"type":typ,"payload":defaults[typ]})
-        st.session_state["selected"]={"kind":"income","id":cid}; st.rerun()
+        scn.setdefault("income_cards", []).append({"id":cid,"type":typ,"payload":defaults[typ]})
+        st.session_state["active_editor"] = {"kind":"income","id":cid}
+        st.rerun()
 def render_debt_new(scn):
     typ = st.selectbox("Debt type", ["installment","revolving","student_loan","support"], key="new_debt_typ")
     if st.button("Create debt card"):

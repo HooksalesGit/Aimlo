@@ -1,5 +1,5 @@
 import streamlit as st
-from ui.cards_income import add_income_card, select_income_card
+from ui.cards_income import add_income_card, select_income_card, render_income_board
 from ui.cards_debts import add_debt_card, select_debt_card
 
 
@@ -28,3 +28,11 @@ def test_select_debt_card_sets_active():
     scn = {"debt_cards": [{"id": "abc", "type": "installment", "name": "", "monthly_payment": 0.0}]}
     select_debt_card("abc")
     assert st.session_state["active_editor"] == {"kind": "debt", "id": "abc"}
+
+
+def test_render_income_board_sets_new(monkeypatch):
+    st.session_state.clear()
+    scn = {"income_cards": []}
+    monkeypatch.setattr(st, "button", lambda label, **kwargs: True)
+    render_income_board(scn)
+    assert st.session_state["active_editor"] == {"kind": "income_new"}

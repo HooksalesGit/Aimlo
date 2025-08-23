@@ -33,3 +33,16 @@ def test_select_existing_cards():
     assert st.session_state["active_editor"] == {"kind": "income", "id": inc_id}
     select_debt_card(deb_id)
     assert st.session_state["active_editor"] == {"kind": "debt", "id": deb_id}
+
+
+def test_create_non_w2_income_from_selector(monkeypatch):
+    scn = _setup()
+    st.session_state["active_editor"] = {"kind": "income_new"}
+    st.session_state["new_income_typ"] = "K-1"
+    monkeypatch.setattr(st, "button", lambda label, **kwargs: True if label == "Create income card" else False)
+    monkeypatch.setattr(st, "selectbox", lambda label, options, key=None, **kwargs: st.session_state.get(key, options[0]))
+    monkeypatch.setattr(st, "rerun", lambda: None)
+    render_context_form(st.session_state["active_editor"], scn, [])
+    assert scn["income_cards"] and scn["income_cards"][0]["type"] == "K-1"
+    new_id = scn["income_cards"][0]["id"]
+    assert st.session_state["active_editor"] == {"kind": "income", "id": new_id}
