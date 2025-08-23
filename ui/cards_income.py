@@ -11,7 +11,7 @@ from core.calculators import (
     rentals_75pct_gross_monthly,
     other_income_rows_to_monthly,
 )
-from ui.utils import borrower_name, card_select_button
+from ui.utils import borrower_name
 
 
 def add_income_card(scn, typ="W-2"):
@@ -78,22 +78,40 @@ def render_income_board(scn):
             or ""
         )
         monthly = income_monthly(card)
+        card_id = card["id"]
+        open_key = f"inc_open_{card_id}"
+        dup_key = f"inc_dup_{card_id}"
+        rm_key = f"inc_rm_{card_id}"
         with st.container(border=True):
-            summary = (
-                f"Borrower: {name}\n"
-                f"Type: {card.get('type', '')}\n"
-                f"Employer: {employer}\n"
-                f"Monthly: ${monthly:,.2f}"
-            )
-            c1, c2, c3 = st.columns([0.8, 0.1, 0.1])
+            c1, c2, c3, c4 = st.columns([0.55, 0.25, 0.1, 0.1])
             with c1:
-                if card_select_button(summary, key=f"inc_sel_{card['id']}"):
-                    select_income_card(card["id"])
+                st.write(f"{card.get('type', '')}: {employer}")
+                st.caption(name)
             with c2:
-                if st.button("📄", key=f"inc_dup_{card['id']}", help="Duplicate"):
+                st.write(f"${monthly:,.2f}/mo")
+            with c3:
+                if st.button("📄", key=dup_key, help="Duplicate"):
                     duplicate_income_card(scn, card)
                     st.rerun()
-            with c3:
-                if st.button("🗑️", key=f"inc_rm_{card['id']}", help="Remove"):
-                    remove_income_card(scn, card["id"])
+            with c4:
+                if st.button("🗑️", key=rm_key, help="Remove"):
+                    remove_income_card(scn, card_id)
                     st.rerun()
+            if st.button(" ", key=open_key, label_visibility="collapsed"):
+                select_income_card(card_id)
+            st.markdown(
+                f"""
+                <style>
+                button#{open_key} {{
+                    position: absolute;
+                    top: 0; left: 0; width: 100%; height: 100%;
+                    border: none; background: none; padding: 0;
+                    cursor: pointer; z-index: 0;
+                }}
+                button#{dup_key}, button#{rm_key} {{
+                    position: relative; z-index: 1;
+                }}
+                </style>
+                """,
+                unsafe_allow_html=True,
+            )
