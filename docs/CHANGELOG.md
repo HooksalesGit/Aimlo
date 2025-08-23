@@ -40,3 +40,4 @@ All notable changes to this project will be documented in this file.
 - Dashboard DTI metrics show "—" when income is missing instead of extreme percentages.
 - Add missing `__init__.py` for `ui` package to resolve `KeyError` on import.
 - Avoid TypeError by removing unsupported `label_visibility` from income card open button.
+- Avoid TypeError by removing unsupported `label_visibility` from debt card open button.

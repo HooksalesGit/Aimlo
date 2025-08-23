@@ -73,7 +73,7 @@ def render_debt_board(scn):
                 if st.button("🗑️", key=rm_key, help="Remove"):
                     remove_debt_card(scn, card_id)
                     st.rerun()
-            if st.button(" ", key=open_key, label_visibility="collapsed"):
+            if st.button(" ", key=open_key):
                 select_debt_card(card_id)
             st.markdown(
                 f"""
