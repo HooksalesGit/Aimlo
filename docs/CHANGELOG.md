@@ -12,11 +12,9 @@ All notable changes to this project will be documented in this file.
 - Users can duplicate and remove income and debt cards.
 - YAML-driven guidance spec with loaders, rulebook, and panel scaffolding.
 - Borrowers can be removed from the sidebar, clearing their related income and debt cards.
-- Smoke test covers drawer toggle, auto-open behaviour, and summary band visibility.
 
 ### Changed
 - Income and debt cards use a single bordered surface that opens the editor on click while Duplicate and Remove buttons sit inline and do not trigger the primary action.
-- Sidebar drawer now overlays content at ~640px width with top-left chevron and a top-bar "Show sidebar" button; editing any card auto-opens the drawer.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
@@ -43,4 +41,3 @@ All notable changes to this project will be documented in this file.
 - Add missing `__init__.py` for `ui` package to resolve `KeyError` on import.
 - Avoid TypeError by removing unsupported `label_visibility` from income card open button.
 - Avoid TypeError by removing unsupported `label_visibility` from debt card open button.
-- Summary band offset ensures it remains fully visible beneath the top bar.
