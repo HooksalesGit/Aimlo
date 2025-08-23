@@ -31,3 +31,4 @@ All notable changes to this project will be documented in this file.
 - Sidebar remains visible for data entry with disclosures and guides.
 - Replaced bottom summary drawer with top summary band.
 - Dashboard DTI metrics show "—" when income is missing instead of extreme percentages.
+- Add missing `__init__.py` for `ui` package to resolve `KeyError` on import.
