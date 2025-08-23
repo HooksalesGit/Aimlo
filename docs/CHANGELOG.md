@@ -20,4 +20,5 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Removed left data-entry column; main grid shows income, debts, and property boxes only.
 - All data entry forms open in an overlay drawer with disclosures and guides.
+- Drawer opens by default on first load.
 

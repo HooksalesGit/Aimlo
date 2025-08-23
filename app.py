@@ -22,7 +22,7 @@ st.set_page_config(page_title="Aimlo", layout="wide")
 if "scenarios" not in st.session_state:
     st.session_state["scenarios"] = {"Default": default_scenario()}
     st.session_state["scenario_name"] = "Default"
-st.session_state.setdefault("drawer_open", False)
+st.session_state.setdefault("drawer_open", True)
 st.session_state.setdefault("active_editor", None)
 st.session_state.setdefault("bottombar_visible", False)
 
