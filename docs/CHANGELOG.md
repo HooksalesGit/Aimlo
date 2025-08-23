@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Sticky summary band beneath top bar with snapshot totals.
+- Dashboard metrics surface Total Income, PITIA, FE DTI, and BE DTI.
 - Initial project scaffolding and mandatory metadata files.
 - Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
 - Income and debt cards now display borrower, type, employer/title, and monthly totals.
@@ -26,3 +27,4 @@ All notable changes to this project will be documented in this file.
 - Removed left data-entry column; main grid shows income, debts, and property boxes only.
 - Sidebar remains visible for data entry with disclosures and guides.
 - Replaced bottom summary drawer with top summary band.
+- Dashboard DTI metrics show "—" when income is missing instead of extreme percentages.
