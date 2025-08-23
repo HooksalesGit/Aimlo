@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Compact bottom summary drawer with snapshot totals.
 - Initial project scaffolding and mandatory metadata files.
 - Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
+- Income and debt cards now display borrower, type, employer/title, and monthly totals.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
