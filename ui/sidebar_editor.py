@@ -7,6 +7,7 @@ from core.calculators import (
 )
 from ui.utils import borrower_selectbox
 from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE
+from ui.layout_helpers import SIDEBAR_WIDTH
 
 HELP_MAP={
  "W-2":{"annual_salary":"Paystub YTD/Base; W-2 Box 1 context","hourly_rate":"Paystub rate","hours_per_week":"Offer/VOE","ot_ytd":"Paystub YTD OT","bonus_ytd":"Paystub YTD Bonus","comm_ytd":"Paystub YTD Commission","months_ytd":"Months covered by YTD","ot_ly":"W-2/Last Year OT","bonus_ly":"W-2/Last Year Bonus","comm_ly":"W-2/Last Year Comm","months_ly":"Months for LY variable"},
@@ -229,8 +230,10 @@ def render_drawer(scn, warnings=None):
     colors = THEME["colors"]
     bg = colors.get("panel_bg", "#222")
     text = colors.get("panel_text", "#fff")
+    width = SIDEBAR_WIDTH * 2
     st.markdown(
-        f"<style>div[data-testid='stSidebar']{{width:600px;background:{bg};color:{text};}}</style>",
+        f"<style>section[data-testid='stSidebar']{{width:{width}px !important;max-width:{width}px !important;"
+        f"background:{bg};color:{text};}}</style>",
         unsafe_allow_html=True,
     )
 
