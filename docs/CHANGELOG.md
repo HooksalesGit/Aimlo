@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Income and debt cards open the editor when clicked; duplicate and remove actions use icon buttons.
+- Income and debt cards now show a single bordered box with inline duplicate and remove buttons.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
