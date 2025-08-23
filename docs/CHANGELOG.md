@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Sidebar drawer rendered empty because widgets were outside the HTML container; content now uses Streamlit's sidebar.
 - Removed sidebar toggle arrow and restored income and debt boards to main layout with a wider persistent sidebar.
 - Sidebar editor width now doubles `SIDEBAR_WIDTH` using the updated `section[data-testid='stSidebar']` selector for consistency.
+- Property info panel now renders in a third column to the right of debts.
 
 ### Changed
 - Removed left data-entry column; main grid shows income, debts, and property boxes only.
