@@ -3,7 +3,7 @@ import streamlit as st
 import uuid
 import copy
 from core.calculators import student_loan_payment
-from ui.utils import borrower_name, card_select_button
+from ui.utils import borrower_name
 
 
 def add_debt_card(scn, typ="installment"):
@@ -54,22 +54,40 @@ def render_debt_board(scn):
     for card in scn.get("debt_cards", []):
         name = borrower_name(scn, int(card.get("borrower_id", 1)))
         monthly = debt_monthly(card, policy)
+        card_id = card["id"]
+        open_key = f"deb_open_{card_id}"
+        dup_key = f"deb_dup_{card_id}"
+        rm_key = f"deb_rm_{card_id}"
         with st.container(border=True):
-            summary = (
-                f"Borrower: {name}\n"
-                f"Type: {card.get('type', '')}\n"
-                f"Title: {card.get('name', '')}\n"
-                f"Monthly: ${monthly:,.2f}"
-            )
-            c1, c2, c3 = st.columns([0.8, 0.1, 0.1])
+            c1, c2, c3, c4 = st.columns([0.55, 0.25, 0.1, 0.1])
             with c1:
-                if card_select_button(summary, key=f"deb_sel_{card['id']}"):
-                    select_debt_card(card["id"])
+                st.write(f"{card.get('type', '')}: {card.get('name', '')}")
+                st.caption(name)
             with c2:
-                if st.button("📄", key=f"deb_dup_{card['id']}", help="Duplicate"):
+                st.write(f"${monthly:,.2f}/mo")
+            with c3:
+                if st.button("📄", key=dup_key, help="Duplicate"):
                     duplicate_debt_card(scn, card)
                     st.rerun()
-            with c3:
-                if st.button("🗑️", key=f"deb_rm_{card['id']}", help="Remove"):
-                    remove_debt_card(scn, card["id"])
+            with c4:
+                if st.button("🗑️", key=rm_key, help="Remove"):
+                    remove_debt_card(scn, card_id)
                     st.rerun()
+            if st.button(" ", key=open_key, label_visibility="collapsed"):
+                select_debt_card(card_id)
+            st.markdown(
+                f"""
+                <style>
+                button#{open_key} {{
+                    position: absolute;
+                    top: 0; left: 0; width: 100%; height: 100%;
+                    border: none; background: none; padding: 0;
+                    cursor: pointer; z-index: 0;
+                }}
+                button#{dup_key}, button#{rm_key} {{
+                    position: relative; z-index: 1;
+                }}
+                </style>
+                """,
+                unsafe_allow_html=True,
+            )

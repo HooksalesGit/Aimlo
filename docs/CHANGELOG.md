@@ -14,8 +14,7 @@ All notable changes to this project will be documented in this file.
 - Borrowers can be removed from the sidebar, clearing their related income and debt cards.
 
 ### Changed
-- Income and debt cards open the editor when clicked; duplicate and remove actions use icon buttons.
-- Income and debt cards now show a single bordered box with inline duplicate and remove buttons.
+- Income and debt cards use a single bordered surface that opens the editor on click while Duplicate and Remove buttons sit inline and do not trigger the primary action.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
