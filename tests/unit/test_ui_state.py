@@ -1,5 +1,5 @@
 import streamlit as st
-from ui.utils import show_sidebar, hide_sidebar
+from ui.utils import show_sidebar, hide_sidebar, toggle_sidebar
 
 
 def test_drawer_state():
@@ -8,6 +8,15 @@ def test_drawer_state():
     assert st.session_state.get("drawer_open") is True
     hide_sidebar()
     assert st.session_state.get("drawer_open") is False
+
+
+def test_drawer_toggle():
+    st.session_state.clear()
+    st.session_state["drawer_open"] = False
+    toggle_sidebar()
+    assert st.session_state["drawer_open"] is True
+    toggle_sidebar()
+    assert st.session_state["drawer_open"] is False
 
 
 def test_active_editor_mutations():

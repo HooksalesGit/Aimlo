@@ -1,5 +1,5 @@
 import streamlit as st
-from ui.utils import show_sidebar, hide_sidebar, show_bottombar, hide_bottombar
+from ui.utils import show_sidebar, hide_sidebar, show_bottombar, hide_bottombar, toggle_sidebar
 
 def test_visibility_sequence():
     st.session_state.clear()
@@ -7,6 +7,10 @@ def test_visibility_sequence():
     show_bottombar()
     assert st.session_state["drawer_open"]
     assert st.session_state["bottombar_visible"]
+    toggle_sidebar()
+    assert not st.session_state["drawer_open"]
+    toggle_sidebar()
+    assert st.session_state["drawer_open"]
     hide_sidebar()
     hide_bottombar()
     assert not st.session_state["drawer_open"]
