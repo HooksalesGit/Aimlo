@@ -1,5 +1,5 @@
 # AGENT.md — AMALO Engineering Agent Playbook
-**Date:** 2025-08-22
+**Date:** 2025-08-23
 
 This file defines how the autonomous agent (and human contributors) plan, implement, test, and release changes to the **AMALO** mortgage app. It encodes the standards required for reliability, clarity, and MLO-first usability.
 
@@ -17,7 +17,7 @@ AMALO is the **primary qualification tool** for a Florida Mortgage Loan Originat
 ---
 
 ## 2) Non‑Negotiable Principles
-1) **Explain fields**: All user-facing field help lives in `docs/field_hints.yml`. The app’s **Guidance Center** reads it at runtime. No new field without an entry here.
+1) **Explain fields & warnings**: All user-facing field help and rule text live in `docs/field_hints.yml` and `docs/rulebook.yml`. The app’s **Guidance Panel** reads them at runtime. No new field or rule without an entry here.
 2) **No regressions**: Every PR that changes logic adds tests (unit + at least one integration). **Golden scenarios** must remain green.
 3) **Visible version**: `core/version.py` defines `__version__ = "MAJOR.MINOR.PATCH"`. The top bar shows `AMALO — v{__version__}`.
 4) **Change is tracked**: `docs/CHANGELOG.md` (Keep a Changelog). Each PR updates the **Unreleased** section.
@@ -32,6 +32,7 @@ app.py
 /core/
   calculators.py
   rules.py
+  guidance.py
   presets.py
   models.py
   scenarios.py
@@ -43,6 +44,7 @@ app.py
   sidebar_editor.py
   bottombar.py
   tabs_dashboard.py
+  guidance_panel.py
 /export/
   pdf_export.py
 /tests/
@@ -55,6 +57,7 @@ app.py
   SCENARIOS.md
   CHANGELOG.md
   field_hints.yml
+  rulebook.yml
   CONTRIBUTING.md
 .github/
   workflows/ci.yml
@@ -76,6 +79,7 @@ app.py
 - **Tests added/updated** (unit + at least one integration path). Golden scenarios updated only if expected outputs intentionally change.
 - `docs/CHANGELOG.md` updated (under **Unreleased**).
 - `docs/field_hints.yml` updated for any new/changed field.
+- `docs/rulebook.yml` updated for any new/changed rule text.
 - `core/version.py` bumped (SemVer: patch=fix, minor=feature, major=breaking).
 - Top bar displays the new version automatically.
 - App launches; no critical rules broken; CI green.
@@ -101,7 +105,7 @@ app.py
 ## 8) UX & Explainability Rules
 - Input = **forms** inside cards; no raw editable tables for data entry.
 - Each field shows label + sublabel pulled from `docs/field_hints.yml`.
-- **Guidance Center** side panel provides a 3-way toggle: **Guides**, **Warnings**, **Where to find**.
+- Sticky **Guidance Panel** under the summary band provides tabs: **Disclosures**, **Guides**, **Warnings**, **Where to find**. Drawer fields use “More info” chips that scroll to the panel.
 - Warnings include a **“Fix this”** deep link that focuses the exact card/field.
 - Optional bottom bar: **Total Income / PITIA / FE / BE** with PASS/CHECK at a glance.
 
@@ -123,7 +127,7 @@ When a new request arrives, the agent must **always**:
 1) **Clarify only critical ambiguity**; otherwise proceed with reasonable defaults.
 2) **Plan** briefly in the PR description: tasks → code → tests → docs → version.
 3) **Implement** the smallest viable change; keep modules cohesive.
-4) **Sync explanations**: update `docs/field_hints.yml` for every new/changed field.
+4) **Sync explanations**: update `docs/field_hints.yml` for every new/changed field and `docs/rulebook.yml` for new/changed warnings.
 5) **Test**: add/adjust unit & integration; update/add a golden scenario only when intended output changes are justified.
 6) **Changelog**: append under **Unreleased**.
 7) **Version**: bump `core/version.py` appropriately.
@@ -134,6 +138,7 @@ When a new request arrives, the agent must **always**:
 - [ ] Golden scenarios pass (or updated intentionally)
 - [ ] `docs/CHANGELOG.md` updated (Unreleased)
 - [ ] `docs/field_hints.yml` updated (new/changed fields)
+- [ ] `docs/rulebook.yml` updated (new/changed warnings)
 - [ ] Version bumped in `core/version.py` and visible in top bar
 - [ ] UX screenshots/GIFs attached
 - [ ] CI green; coverage ≥85%
@@ -181,6 +186,7 @@ CI must block merges unless all of the following are true:
 - `core/version.py` — single source of truth for version.
 - `docs/CHANGELOG.md` — Keep a Changelog.
 - `docs/field_hints.yml` — single source for field help.
+- `docs/rulebook.yml` — single source for warning copy.
 - `tests/` — unit, integration, golden.
 
 ### B) SemVer Guidance
