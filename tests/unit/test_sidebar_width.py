@@ -52,3 +52,4 @@ def test_sidebar_hidden(monkeypatch):
 
     assert 'display:none' in captured['html']
     assert 'collapsedControl' in captured['html']
+    assert 'stAppViewContainer' in captured['html'] and 'margin-left:0' in captured['html']
