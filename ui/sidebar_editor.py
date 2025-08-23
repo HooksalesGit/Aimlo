@@ -28,6 +28,18 @@ def render_borrowers_editor(scn):
     for bid in sorted(scn.get("borrowers", {})):
         br = scn["borrowers"][bid]
         with st.expander(f"Borrower {bid}", expanded=True):
+            if st.button("Remove borrower", key=f"br_rm_{bid}"):
+                scn["borrowers"].pop(bid, None)
+                scn["income_cards"] = [
+                    c for c in scn.get("income_cards", []) if c.get("payload", {}).get("borrower_id") != bid
+                ]
+                scn["debt_cards"] = [
+                    c for c in scn.get("debt_cards", []) if c.get("borrower_id") != bid
+                ]
+                if st.session_state.get("selected_borrower") == bid:
+                    remaining = sorted(scn.get("borrowers", {}))
+                    st.session_state["selected_borrower"] = remaining[0] if remaining else None
+                st.rerun()
             br["first_name"] = st.text_input("First name", value=br.get("first_name", ""), key=f"br_fn_{bid}")
             br["last_name"] = st.text_input("Last name", value=br.get("last_name", ""), key=f"br_ln_{bid}")
             br["phone"] = st.text_input("Phone number", value=br.get("phone", ""), key=f"br_ph_{bid}")

@@ -79,16 +79,18 @@ def render_income_board(scn):
         )
         monthly = income_monthly(card)
         with st.container(border=True):
-            st.markdown(f"**Borrower:** {name}")
-            st.markdown(f"**Type:** {card.get('type', '')}")
-            st.markdown(f"**Employer:** {employer}")
-            st.markdown(f"**Monthly:** ${monthly:,.2f}")
-            c1, c2, c3 = st.columns(3)
-            if c1.button("Edit", key=f"inc_edit_{card['id']}"):
+            summary = (
+                f"Borrower: {name}\n"
+                f"Type: {card.get('type', '')}\n"
+                f"Employer: {employer}\n"
+                f"Monthly: ${monthly:,.2f}"
+            )
+            if st.button(summary, key=f"inc_sel_{card['id']}", use_container_width=True):
                 select_income_card(card["id"])
-            if c2.button("Duplicate", key=f"inc_dup_{card['id']}"):
+            c1, c2 = st.columns(2)
+            if c1.button("📄", key=f"inc_dup_{card['id']}", help="Duplicate"):
                 duplicate_income_card(scn, card)
                 st.rerun()
-            if c3.button("Remove", key=f"inc_rm_{card['id']}"):
+            if c2.button("🗑️", key=f"inc_rm_{card['id']}", help="Remove"):
                 remove_income_card(scn, card["id"])
                 st.rerun()

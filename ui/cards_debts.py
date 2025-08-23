@@ -55,16 +55,18 @@ def render_debt_board(scn):
         name = borrower_name(scn, int(card.get("borrower_id", 1)))
         monthly = debt_monthly(card, policy)
         with st.container(border=True):
-            st.markdown(f"**Borrower:** {name}")
-            st.markdown(f"**Type:** {card.get('type', '')}")
-            st.markdown(f"**Title:** {card.get('name', '')}")
-            st.markdown(f"**Monthly:** ${monthly:,.2f}")
-            c1, c2, c3 = st.columns(3)
-            if c1.button("Edit", key=f"deb_edit_{card['id']}"):
+            summary = (
+                f"Borrower: {name}\n"
+                f"Type: {card.get('type', '')}\n"
+                f"Title: {card.get('name', '')}\n"
+                f"Monthly: ${monthly:,.2f}"
+            )
+            if st.button(summary, key=f"deb_sel_{card['id']}", use_container_width=True):
                 select_debt_card(card["id"])
-            if c2.button("Duplicate", key=f"deb_dup_{card['id']}"):
+            c1, c2 = st.columns(2)
+            if c1.button("📄", key=f"deb_dup_{card['id']}", help="Duplicate"):
                 duplicate_debt_card(scn, card)
                 st.rerun()
-            if c3.button("Remove", key=f"deb_rm_{card['id']}"):
+            if c2.button("🗑️", key=f"deb_rm_{card['id']}", help="Remove"):
                 remove_debt_card(scn, card["id"])
                 st.rerun()
