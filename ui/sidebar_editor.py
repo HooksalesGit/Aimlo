@@ -231,12 +231,16 @@ def render_drawer(scn, warnings=None):
     colors = THEME["colors"]
     bg = colors.get("panel_bg", "#222")
     text = colors.get("panel_text", "#fff")
-    width = SIDEBAR_WIDTH * 2
-    st.markdown(
+    open_state = st.session_state.get("drawer_open", True)
+    width = SIDEBAR_WIDTH * 2 if open_state else 0
+    css = (
         f"<style>section[data-testid='stSidebar']{{width:{width}px !important;max-width:{width}px !important;"
-        f"background:{bg};color:{text};}}</style>",
-        unsafe_allow_html=True,
     )
+    if open_state:
+        css += f"background:{bg};color:{text};}}</style>"
+    else:
+        css += "display:none;}}</style><style>div[data-testid='collapsedControl']{display:none;}</style>"
+    st.markdown(css, unsafe_allow_html=True)
 
     with st.sidebar:
         render_context_form(st.session_state.get("active_editor"), scn, warnings)
