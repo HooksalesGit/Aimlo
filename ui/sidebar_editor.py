@@ -5,11 +5,8 @@ from core.calculators import (
     w2_row_to_monthly, schc_rows_to_monthly, k1_rows_to_monthly, c1120_rows_to_monthly,
     rentals_schedule_e_monthly, rentals_75pct_gross_monthly, other_income_rows_to_monthly
 )
-from ui.utils import borrower_selectbox, toggle_sidebar
+from ui.utils import borrower_selectbox
 from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE
-from ui.cards_income import render_income_board
-from ui.cards_debts import render_debt_board
-from ui.panel_property import render_property_panel
 
 HELP_MAP={
  "W-2":{"annual_salary":"Paystub YTD/Base; W-2 Box 1 context","hourly_rate":"Paystub rate","hours_per_week":"Offer/VOE","ot_ytd":"Paystub YTD OT","bonus_ytd":"Paystub YTD Bonus","comm_ytd":"Paystub YTD Commission","months_ytd":"Months covered by YTD","ot_ly":"W-2/Last Year OT","bonus_ly":"W-2/Last Year Bonus","comm_ly":"W-2/Last Year Comm","months_ly":"Months for LY variable"},
@@ -195,15 +192,9 @@ def render_property_editor(h):
     st.markdown("---"); st.markdown("### Program Tables (MI/MIP/Fees)"); st.caption("Edit defaults as needed (Conventional MI bands, FHA/VA/USDA upfront & annual).")
     st.json({"Conventional_MI_bands":CONV_MI_BANDS,"FHA":FHA_TABLE,"VA":VA_TABLE,"USDA":USDA_TABLE})
 def render_context_form(active, scn, warnings):
-    """Render the drawer content for the currently active editor."""
-    if active is None or active.get("kind") in {None, "income_board", "debt_board", "property_board"}:
-        kind = None if active is None else active.get("kind")
-        if kind in (None, "income_board"):
-            render_income_board(scn)
-        if kind in (None, "debt_board"):
-            render_debt_board(scn)
-        if kind in (None, "property_board"):
-            render_property_panel(scn)
+    """Render the sidebar content for the currently active editor."""
+    if active is None:
+        st.info("Select a card to edit")
         st.markdown("---")
         render_disclosures(warnings)
         return
@@ -232,43 +223,16 @@ def render_context_form(active, scn, warnings):
     render_disclosures(warnings)
 
 def render_drawer(scn, warnings=None):
-    """Render the editor drawer using Streamlit's built-in sidebar.
+    """Render the editor sidebar permanently on screen."""
 
-    The previous implementation attempted to build a custom drawer with raw
-    HTML. Streamlit renders each element in its own root container, so the
-    sidebar HTML wrapper ended up empty, leaving the drawer blank. By using
-    `st.sidebar` as the container we ensure all widgets appear correctly.
-    """
     warnings = warnings or []
-    open_state = st.session_state.get("drawer_open", False)
-
-    # Toggle button lives in the main area
-    arrow = "\u2190" if open_state else "\u2192"
-    if st.button(arrow, key="drawer_toggle_btn"):
-        toggle_sidebar()
-        st.rerun()
-
-    if not open_state:
-        # Hide sidebar when closed
-        st.sidebar.empty()
-        st.markdown(
-            "<style>div[data-testid='stSidebar']{display:none;}</style>",
-            unsafe_allow_html=True,
-        )
-        return
-
-    # Ensure sidebar is visible and themed
     colors = THEME["colors"]
     bg = colors.get("panel_bg", "#222")
     text = colors.get("panel_text", "#fff")
     st.markdown(
-        f"<style>div[data-testid='stSidebar']{{display:block;background:{bg};color:{text};}}</style>",
+        f"<style>div[data-testid='stSidebar']{{width:600px;background:{bg};color:{text};}}</style>",
         unsafe_allow_html=True,
     )
 
     with st.sidebar:
-        if st.button("✕", key="drawer_close"):
-            st.session_state["drawer_open"] = False
-            st.session_state["active_editor"] = None
-            st.rerun()
         render_context_form(st.session_state.get("active_editor"), scn, warnings)
