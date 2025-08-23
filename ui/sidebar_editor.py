@@ -237,66 +237,30 @@ def render_context_form(active, scn, warnings):
     render_disclosures(warnings)
 
 def render_drawer(scn, warnings=None):
-    """Render the editor sidebar as an overlay drawer."""
+    """Render the editor sidebar permanently on screen."""
 
     warnings = warnings or []
     colors = THEME["colors"]
     bg = colors.get("panel_bg", "#222")
     text = colors.get("panel_text", "#fff")
 
-    # Auto-open drawer when an editor is activated while hidden
+    # Auto-open drawer when an editor is active
     if st.session_state.get("active_editor") and not st.session_state.get("drawer_open", True):
         st.session_state["drawer_open"] = True
 
     open_state = st.session_state.get("drawer_open", True)
-    width_css = f"min(90vw, {SIDEBAR_WIDTH}px)"
-
-    base_css = f"""
-    <style>
-    div[data-testid='collapsedControl']{{display:none;}}
-    section[data-testid='stSidebar']{{position:fixed;top:0;bottom:0;left:0;z-index:1001;}}
-    div[data-testid='stAppViewContainer']{{margin-left:0;}}
-    </style>
-    """
-    st.markdown(base_css, unsafe_allow_html=True)
-
-    if open_state:
-        st.markdown(
-            f"""
-            <style>
-            section[data-testid='stSidebar']{{width:{width_css};max-width:{width_css};background:{bg};color:{text};box-shadow:2px 0 8px rgba(0,0,0,0.2);padding-top:32px;}}
-            #drawer_overlay_btn{{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);border:none;z-index:1000;}}
-            button#drawer_close{{position:absolute;top:8px;left:8px;}}
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-        if st.button("", key="drawer_overlay_btn"):
-            st.session_state["drawer_open"] = False
-            st.rerun()
-    else:
-        st.markdown(
-            "<style>section[data-testid='stSidebar']{display:none;}</style>",
-            unsafe_allow_html=True,
-        )
-
-    # Close on Esc by triggering the overlay button
-    st.markdown(
-        """
-        <script>
-        document.addEventListener('keydown', function(e){
-            if(e.key === 'Escape'){
-                var btn = parent.document.getElementById('drawer_overlay_btn');
-                if(btn){btn.click();}
-            }
-        });
-        </script>
-        """,
-        unsafe_allow_html=True,
+    width = SIDEBAR_WIDTH if open_state else 0
+    css = (
+        f"<style>section[data-testid='stSidebar']{{width:{width}px !important;max-width:{width}px !important;"
     )
+    if open_state:
+        css += f"background:{bg};color:{text};}}</style>"
+    else:
+        css += "display:none;}}</style>" + "<style>div[data-testid='stAppViewContainer']{margin-left:0;}</style>"
+
+    # Reposition toggle control to top-left for both states
+    css += "<style>div[data-testid='collapsedControl']{position:fixed;top:0;left:0;}</style>"
+    st.markdown(css, unsafe_allow_html=True)
 
     with st.sidebar:
-        if st.button("⮜⮜", key="drawer_close", help="Close sidebar"):
-            st.session_state["drawer_open"] = False
-            st.rerun()
         render_context_form(st.session_state.get("active_editor"), scn, warnings)

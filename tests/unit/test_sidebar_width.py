@@ -4,10 +4,10 @@ from ui.layout_helpers import SIDEBAR_WIDTH
 
 
 def test_sidebar_drawer_width(monkeypatch):
-    captured = []
+    captured = {}
 
     def fake_markdown(html, unsafe_allow_html=False):
-        captured.append(html)
+        captured['html'] = html
 
     monkeypatch.setattr(st, 'markdown', fake_markdown)
 
@@ -23,17 +23,17 @@ def test_sidebar_drawer_width(monkeypatch):
     st.session_state.clear()
     sidebar_editor.render_drawer({})
 
-    combined = "".join(captured)
-    width_css = f"min(90vw, {SIDEBAR_WIDTH}px)"
-    assert "section[data-testid='stSidebar']" in combined
-    assert width_css in combined
+    width = SIDEBAR_WIDTH
+    assert "section[data-testid='stSidebar']" in captured['html']
+    assert f"width:{width}px" in captured['html']
+    assert f"max-width:{width}px" in captured['html']
 
 
 def test_sidebar_hidden(monkeypatch):
-    captured = []
+    captured = {}
 
     def fake_markdown(html, unsafe_allow_html=False):
-        captured.append(html)
+        captured['html'] = html
 
     monkeypatch.setattr(st, 'markdown', fake_markdown)
 
@@ -50,7 +50,6 @@ def test_sidebar_hidden(monkeypatch):
     st.session_state['drawer_open'] = False
     sidebar_editor.render_drawer({})
 
-    combined = "".join(captured)
-    assert 'display:none' in combined
-    assert 'collapsedControl' in combined
-    assert 'stAppViewContainer' in combined and 'margin-left:0' in combined
+    assert 'display:none' in captured['html']
+    assert 'collapsedControl' in captured['html']
+    assert 'stAppViewContainer' in captured['html'] and 'margin-left:0' in captured['html']
