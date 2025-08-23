@@ -1,6 +1,5 @@
 import streamlit as st
 import ui.layout as layout
-from ui.utils import show_bottombar, hide_bottombar
 
 
 def test_layout_smoke(monkeypatch):
@@ -31,8 +30,3 @@ def test_layout_smoke(monkeypatch):
 
     assert col_meta["n"] == 3
     assert prop_called["called"] is True
-
-    show_bottombar()
-    assert st.session_state["bottombar_visible"] is True
-    hide_bottombar()
-    assert st.session_state["bottombar_visible"] is False

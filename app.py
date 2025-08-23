@@ -2,8 +2,7 @@ import streamlit as st
 from ui.topbar import render_topbar
 from ui.layout import render_layout
 from ui.sidebar_editor import render_drawer
-from ui.bottombar import render_bottombar
-from ui.utils import show_bottombar
+from ui.summary_band import render_summary_band
 from core.scenarios import default_scenario
 from core.calculators import (
     piti_components,
@@ -25,14 +24,10 @@ if "scenarios" not in st.session_state:
 
 st.session_state.setdefault("active_editor", None)
 
-
-st.session_state.setdefault("bottombar_visible", False)
-
 render_topbar()
 scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
-render_layout(scn)
 
-# Compute totals for bottom bar
+# Compute totals for summary band
 h = scn["housing"]
 comp = piti_components(
     h.get("purchase_price", 0),
@@ -77,12 +72,27 @@ summary = {
     "BE": BE,
     "FE_target": st.session_state.get("fe_target", 0.31),
     "BE_target": st.session_state.get("be_target", 0.43),
+    "LTV": comp["LTV"],
+    "PI": comp["PI"],
+    "Taxes": comp["Taxes"],
+    "HOI": comp["HOI"],
+    "HOA": comp["HOA"],
+    "MI_MIP": comp["MI_MIP"],
+    "AdjustedLoan": comp["AdjustedLoan"],
+    "Program": h.get("program", "Conventional"),
+    "Rate": h.get("rate_pct", 0),
+    "Term": h.get("term_years", 0),
+    "FinanceUpfront": h.get("finance_upfront", False),
+    "DownPaymentPct": (
+        float(h.get("down_payment_amt", 0)) / float(h.get("purchase_price", 1))
+        if float(h.get("purchase_price", 0)) > 0
+        else 0.0
+    ),
 }
-render_bottombar(st.session_state["bottombar_visible"], summary)
-if not st.session_state["bottombar_visible"]:
-    if st.button("\u25b2", key="bottombar_show"):
-        show_bottombar()
-        st.rerun()
+
+label = render_summary_band(summary)
+
+render_layout(scn)
 
 # Render drawer last
 render_drawer(scn)

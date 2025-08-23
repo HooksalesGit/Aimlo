@@ -27,8 +27,6 @@ def build_sidebar_css(panel_bg: str, panel_text: str, visible: bool, width: int 
 .sidebar-toggle{{position:fixed;top:70px;left:{width}px;z-index:1000;}}
 .sidebar-toggle button{{background:{panel_bg};color:{panel_text};border:none;}}
 .scroll-income,.scroll-debt,.scroll-prop{{max-height:400px;overflow-y:auto;border:1px solid #ccc;padding:8px;}}
-#bottombar_show button{{background:{panel_bg};color:{panel_text};border:none;}}
-#bottombar_show{{position:fixed;bottom:0;right:10px;z-index:1000;}}
 </style>
 """
     if not visible:
