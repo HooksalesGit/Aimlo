@@ -27,3 +27,28 @@ def test_sidebar_drawer_width(monkeypatch):
     assert "section[data-testid='stSidebar']" in captured['html']
     assert f"width:{width}px" in captured['html']
     assert f"max-width:{width}px" in captured['html']
+
+
+def test_sidebar_hidden(monkeypatch):
+    captured = {}
+
+    def fake_markdown(html, unsafe_allow_html=False):
+        captured['html'] = html
+
+    monkeypatch.setattr(st, 'markdown', fake_markdown)
+
+    class DummySidebar:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+    monkeypatch.setattr(st, 'sidebar', DummySidebar())
+    monkeypatch.setattr(sidebar_editor, 'render_context_form', lambda *a, **k: None)
+    st.session_state.clear()
+    st.session_state['drawer_open'] = False
+    sidebar_editor.render_drawer({})
+
+    assert 'display:none' in captured['html']
+    assert 'collapsedControl' in captured['html']

@@ -1,6 +1,17 @@
 import streamlit as st
-from ui.cards_income import add_income_card, select_income_card, render_income_board
-from ui.cards_debts import add_debt_card, select_debt_card
+from ui.cards_income import (
+    add_income_card,
+    select_income_card,
+    render_income_board,
+    duplicate_income_card,
+    remove_income_card,
+)
+from ui.cards_debts import (
+    add_debt_card,
+    select_debt_card,
+    duplicate_debt_card,
+    remove_debt_card,
+)
 
 
 def test_income_card_add_sets_active():
@@ -36,3 +47,25 @@ def test_render_income_board_sets_new(monkeypatch):
     monkeypatch.setattr(st, "button", lambda label, **kwargs: True)
     render_income_board(scn)
     assert st.session_state["active_editor"] == {"kind": "income_new"}
+
+
+def test_duplicate_and_remove_income_cards():
+    st.session_state.clear()
+    card = {"id": "a", "type": "W-2", "payload": {}}
+    scn = {"income_cards": [card]}
+    new_id = duplicate_income_card(scn, card)
+    assert len(scn["income_cards"]) == 2
+    assert new_id != "a"
+    remove_income_card(scn, "a")
+    assert all(c["id"] != "a" for c in scn["income_cards"])
+
+
+def test_duplicate_and_remove_debt_cards():
+    st.session_state.clear()
+    card = {"id": "a", "borrower_id": 1, "type": "installment", "name": "", "monthly_payment": 0.0}
+    scn = {"debt_cards": [card]}
+    new_id = duplicate_debt_card(scn, card)
+    assert len(scn["debt_cards"]) == 2
+    assert new_id != "a"
+    remove_debt_card(scn, "a")
+    assert all(c["id"] != "a" for c in scn["debt_cards"])

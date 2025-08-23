@@ -1,6 +1,7 @@
 """Income cards board and helpers."""
 import streamlit as st
 import uuid
+import copy
 from core.calculators import (
     w2_row_to_monthly,
     schc_rows_to_monthly,
@@ -46,6 +47,22 @@ def income_monthly(card: dict) -> float:
     return 0.0
 
 
+def duplicate_income_card(scn, card: dict) -> str:
+    """Duplicate an income card and return new card ID."""
+    new_card = copy.deepcopy(card)
+    new_card["id"] = uuid.uuid4().hex[:8]
+    scn.setdefault("income_cards", []).append(new_card)
+    st.session_state["active_editor"] = {"kind": "income", "id": new_card["id"]}
+    return new_card["id"]
+
+
+def remove_income_card(scn, card_id: str) -> None:
+    """Remove an income card by ID."""
+    scn["income_cards"] = [c for c in scn.get("income_cards", []) if c["id"] != card_id]
+    if st.session_state.get("active_editor") == {"kind": "income", "id": card_id}:
+        st.session_state["active_editor"] = None
+
+
 def render_income_board(scn):
     st.subheader("All Income")
     if st.button("Add income card"):
@@ -66,5 +83,12 @@ def render_income_board(scn):
             st.markdown(f"**Type:** {card.get('type', '')}")
             st.markdown(f"**Employer:** {employer}")
             st.markdown(f"**Monthly:** ${monthly:,.2f}")
-            if st.button("Edit", key=f"inc_{card['id']}"):
+            c1, c2, c3 = st.columns(3)
+            if c1.button("Edit", key=f"inc_edit_{card['id']}"):
                 select_income_card(card["id"])
+            if c2.button("Duplicate", key=f"inc_dup_{card['id']}"):
+                duplicate_income_card(scn, card)
+                st.rerun()
+            if c3.button("Remove", key=f"inc_rm_{card['id']}"):
+                remove_income_card(scn, card["id"])
+                st.rerun()

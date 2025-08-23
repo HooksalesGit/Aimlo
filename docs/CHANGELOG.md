@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
 - Income and debt cards now display borrower, type, employer/title, and monthly totals.
 - Income card creation now allows selecting the income type instead of defaulting to W-2 only.
+- Users can duplicate and remove income and debt cards.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
@@ -23,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Removed sidebar toggle arrow and restored income and debt boards to main layout with a wider persistent sidebar.
 - Sidebar editor width now doubles `SIDEBAR_WIDTH` using the updated `section[data-testid='stSidebar']` selector for consistency.
 - Property info panel now renders in a third column to the right of debts.
+- Sidebar toggle now hides the drawer completely.
 
 - Removed left data-entry column; main grid shows income, debts, and property boxes only.
 - Sidebar remains visible for data entry with disclosures and guides.
