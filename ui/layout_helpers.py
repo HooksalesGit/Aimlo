@@ -1,7 +1,9 @@
 """Helper functions for layout styling."""
 from __future__ import annotations
 
-SIDEBAR_WIDTH = 260
+# Default width for the sidebar editor drawer. The drawer will clamp to this
+# value on wide screens and use 90% of the viewport width on narrow devices.
+SIDEBAR_WIDTH = 640
 
 
 def build_sidebar_css(panel_bg: str, panel_text: str, visible: bool, width: int = SIDEBAR_WIDTH) -> str:
