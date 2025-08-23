@@ -58,7 +58,7 @@ def render_summary_band(summary: dict) -> str:
     <style>
     #summary_toggle{{width:100%;text-align:left;padding:{spacing['space_sm']}px;background:{colors['surface']};
     border:1px solid {colors['border']};border-radius:{radii['radius_md']}px;box-shadow:{THEME['shadows']['card']};
-    position:sticky;top:48px;z-index:998;}}
+    position:sticky;top:60px;z-index:998;white-space:normal;}}
     </style>
     """
     st.markdown(style, unsafe_allow_html=True)

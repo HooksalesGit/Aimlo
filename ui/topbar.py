@@ -9,6 +9,10 @@ def render_topbar():
         st.markdown("<div class='topbar'>", unsafe_allow_html=True)
         c1,c2,c3,c4 = st.columns([2,3,5,3])
         with c1:
+            if not st.session_state.get("drawer_open", True):
+                if st.button("Show sidebar", key="tb_show_sidebar"):
+                    st.session_state["drawer_open"] = True
+                    st.rerun()
             st.markdown(f"### AMALO — v{__version__}")
         with c2:
             scn = st.session_state["scenarios"][st.session_state["scenario_name"]]
