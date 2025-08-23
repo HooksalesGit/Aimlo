@@ -243,19 +243,23 @@ def render_drawer(scn, warnings=None):
     colors = THEME["colors"]
     bg = colors.get("panel_bg", "#222")
     text = colors.get("panel_text", "#fff")
+
+    # Auto-open drawer when an editor is active
+    if st.session_state.get("active_editor") and not st.session_state.get("drawer_open", True):
+        st.session_state["drawer_open"] = True
+
     open_state = st.session_state.get("drawer_open", True)
-    width = SIDEBAR_WIDTH * 2 if open_state else 0
+    width = SIDEBAR_WIDTH if open_state else 0
     css = (
         f"<style>section[data-testid='stSidebar']{{width:{width}px !important;max-width:{width}px !important;"
     )
     if open_state:
         css += f"background:{bg};color:{text};}}</style>"
     else:
-        css += (
-            "display:none;}}</style>"
-            "<style>div[data-testid='collapsedControl']{display:none;}</style>"
-            "<style>div[data-testid='stAppViewContainer']{margin-left:0;}</style>"
-        )
+        css += "display:none;}}</style>" + "<style>div[data-testid='stAppViewContainer']{margin-left:0;}</style>"
+
+    # Reposition toggle control to top-left for both states
+    css += "<style>div[data-testid='collapsedControl']{position:fixed;top:0;left:0;}</style>"
     st.markdown(css, unsafe_allow_html=True)
 
     with st.sidebar:

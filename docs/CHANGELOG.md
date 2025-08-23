@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
+- Collapsed sidebar no longer leaves unused space and toggle arrow sits at the top-left; sidebar opens when editing cards.
 - Scrollable container layout with bottom bar document checklist.
 - Sidebar and bottom bar toggle arrows with dark gray styling.
 - Sidebar headers now appear inside their bordered boxes for clearer grouping.

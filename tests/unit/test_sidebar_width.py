@@ -23,7 +23,7 @@ def test_sidebar_drawer_width(monkeypatch):
     st.session_state.clear()
     sidebar_editor.render_drawer({})
 
-    width = SIDEBAR_WIDTH * 2
+    width = SIDEBAR_WIDTH
     assert "section[data-testid='stSidebar']" in captured['html']
     assert f"width:{width}px" in captured['html']
     assert f"max-width:{width}px" in captured['html']
