@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Missing income cards and overflowing disclosure box by restructuring layout with Streamlit columns.
 - Prevent type errors in bottom bar when FE/BE targets are provided as strings.
 - Blank drawer when adding income or debt cards due to incorrect editor state.
+- Sidebar drawer rendered empty because widgets were outside the HTML container; content now uses Streamlit's sidebar.
 
 ### Changed
 - Removed left data-entry column; main grid shows income, debts, and property boxes only.
