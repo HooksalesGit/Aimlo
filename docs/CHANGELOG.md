@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file.
 - Income card creation now allows selecting the income type instead of defaulting to W-2 only.
 - Users can duplicate and remove income and debt cards.
 - YAML-driven guidance spec with loaders, rulebook, and panel scaffolding.
+- Borrowers can be removed from the sidebar, clearing their related income and debt cards.
+
+### Changed
+- Income and debt cards open the editor when clicked; duplicate and remove actions use icon buttons.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
