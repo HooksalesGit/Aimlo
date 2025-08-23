@@ -82,7 +82,7 @@ render_bottombar(st.session_state["bottombar_visible"], summary)
 if not st.session_state["bottombar_visible"]:
     if st.button("\u25b2", key="bottombar_show"):
         show_bottombar()
-        st.experimental_rerun()
+        st.rerun()
 
 # Render drawer last
 render_drawer(scn)

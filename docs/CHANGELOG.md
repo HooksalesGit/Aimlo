@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 - Scrollable container layout with bottom bar document checklist.
 - Sidebar and bottom bar toggle arrows with dark gray styling.
 - Sidebar headers now appear inside their bordered boxes for clearer grouping.
-- Replace deprecated `st.experimental_rerun` calls with `st.rerun` for Streamlit 1.27+ compatibility.
+- Replace remaining deprecated `st.experimental_rerun` call with `st.rerun` for Streamlit 1.27+ compatibility.
 - Missing income cards and overflowing disclosure box by restructuring layout with Streamlit columns.
 - Prevent type errors in bottom bar when FE/BE targets are provided as strings.
 - Blank drawer when adding income or debt cards due to incorrect editor state.
