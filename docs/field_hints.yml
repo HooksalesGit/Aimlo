@@ -1,26 +1,114 @@
-# field_hints.yml
-# Single source for field help text. Populate as fields are added.
-example_field:
-  label: "Example Field"
-  where: "Example document"
-  definition: "Short description of the field."
+version: "1.0"
 
-borrower_first_name:
-  label: "First name"
-  where: "Borrower application"
-  definition: "Borrower's given name."
+w2:
+  _overview:
+    label: "W-2 Income"
+    what_it_is: "Income from an employer reported on IRS Form W-2."
+    why_it_matters: "Used to qualify borrowers with stable wage income."
+    where_to_find:
+      - "Form W-2"
+      - "Recent paystub"
+  annual_salary:
+    label: "Annual Salary"
+    what_it_is: "Base yearly wage before bonuses or overtime."
+    why_it_matters: "Forms the core qualifying income for most borrowers."
+    where_to_find:
+      - "Paystub YTD Base"
+    docs_required:
+      - "YTD paystub"
+      - "Most recent W-2"
+    program_notes:
+      conventional: "Bonus or overtime requires two-year history."
+      fha: "Include overtime if consistent for 2 years."
 
-borrower_last_name:
-  label: "Last name"
-  where: "Borrower application"
-  definition: "Borrower's family name."
+schc:
+  _overview:
+    label: "Schedule C Income"
+    what_it_is: "Net profit from a sole proprietorship (Form 1040 Schedule C)."
+    why_it_matters: "Business earnings must be stable or increasing."
+    where_to_find:
+      - "Schedule C L31"
+  net_profit:
+    label: "Net Profit"
+    what_it_is: "Profit after expenses from line 31."
+    why_it_matters: "Averaged over two years for qualifying income."
+    where_to_find:
+      - "Schedule C L31"
+    program_notes:
+      va: "Declining income requires significant justification."
 
-borrower_phone:
-  label: "Phone number"
-  where: "Contact information"
-  definition: "Primary phone to reach the borrower."
+k1:
+  _overview:
+    label: "K-1 Income"
+    what_it_is: "Pass-through income from partnerships or S-corps."
+    why_it_matters: "Ownership percentage affects usable income."
+    where_to_find:
+      - "Schedule K-1"
+  ordinary_business_income:
+    label: "Ordinary Business Income"
+    what_it_is: "Line 1 from K-1."
+    why_it_matters: "Core earnings allocated to the partner."
+    where_to_find:
+      - "K-1 Line 1"
+    program_notes:
+      jumbo: "Verify distributions or business liquidity."
 
-borrower_credit_score:
-  label: "Estimated credit score"
-  where: "Credit report"
-  definition: "Approximate FICO or similar score."
+c1120:
+  _overview:
+    label: "1120S/1120 Income"
+    what_it_is: "Corporate earnings from S-Corp or C-Corp returns."
+    why_it_matters: "Requires verified ownership and access to funds."
+    where_to_find:
+      - "Form 1120S/1120"
+  line30:
+    label: "Line 30 Net Income"
+    what_it_is: "Corporate net income after taxes."
+    why_it_matters: "Subject to ownership percentage."
+    where_to_find:
+      - "1120 Line 30"
+    program_notes:
+      conventional: "Only count with 100% ownership."
+
+rental:
+  _overview:
+    label: "Rental Income"
+    what_it_is: "Income from investment or subject properties."
+    why_it_matters: "Offsets housing expense or adds income."
+    where_to_find:
+      - "Schedule E"
+      - "Lease agreement"
+  gross_rents_annual:
+    label: "Gross Annual Rents"
+    what_it_is: "Total rents received before expenses."
+    why_it_matters: "Used for 75% gross method."
+    where_to_find:
+      - "Schedule E"
+
+other_income:
+  _overview:
+    label: "Other Income"
+    what_it_is: "Alimony, child support, or other qualifying income."
+    why_it_matters: "Must continue for at least three years."
+    where_to_find:
+      - "Court order"
+  monthly_amount:
+    label: "Monthly Amount"
+    what_it_is: "Recurring payment received each month."
+    why_it_matters: "Added directly to qualifying income."
+    where_to_find:
+      - "Bank statements"
+
+property:
+  _overview:
+    label: "Subject Property"
+    what_it_is: "Details about the property being financed."
+    why_it_matters: "Determines loan amount and housing expenses."
+    where_to_find:
+      - "Purchase contract"
+  purchase_price:
+    label: "Purchase Price"
+    what_it_is: "Agreed price of the property."
+    why_it_matters: "Basis for loan amount and LTV."
+    where_to_find:
+      - "Contract page 1"
+

@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Income and debt cards now display borrower, type, employer/title, and monthly totals.
 - Income card creation now allows selecting the income type instead of defaulting to W-2 only.
 - Users can duplicate and remove income and debt cards.
+- YAML-driven guidance spec with loaders, rulebook, and panel scaffolding.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
