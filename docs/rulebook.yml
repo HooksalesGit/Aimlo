@@ -1,0 +1,32 @@
+version: "1.0"
+
+NO_INCOME:
+  title: "No income entered"
+  message: "At least one source of income is required to qualify."
+  severity: "critical"
+  fix_hint: "Add an income source to continue."
+  applies_to:
+    - global
+  doc_refs:
+    - "Loan application"
+
+W2_VAR_LT_12:
+  title: "Variable income < 12 months"
+  message: "Bonus or overtime income with less than 12 months history cannot be used."
+  severity: "warn"
+  fix_hint: "Provide 12 months history or exclude variable income."
+  applies_to:
+    - w2
+  doc_refs:
+    - "Paystub"
+    - "VOE"
+
+SCHC_DECLINE:
+  title: "Schedule C declining"
+  message: "Net profit declined year over year."
+  severity: "info"
+  fix_hint: "Document reason for decline or use lower income."
+  applies_to:
+    - schc
+  doc_refs:
+    - "Schedule C"
