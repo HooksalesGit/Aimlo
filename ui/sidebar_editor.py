@@ -230,7 +230,7 @@ def render_drawer(scn, warnings=None):
     bg = colors.get("panel_bg", "#222")
     text = colors.get("panel_text", "#fff")
     st.markdown(
-        f"<style>div[data-testid='stSidebar']{{width:600px;background:{bg};color:{text};}}</style>",
+        f"<style>div[data-testid='stSidebar']{{width:1200px;background:{bg};color:{text};}}</style>",
         unsafe_allow_html=True,
     )
 
