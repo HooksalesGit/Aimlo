@@ -4,10 +4,16 @@ from core.presets import DISCLAIMER
 def render_dashboard(summary: dict, flags: dict, checklist: list, scenario_name: str):
     st.header(f"Dashboard — {scenario_name}")
     c1,c2,c3,c4=st.columns(4)
-    c1.metric("Total Income", f"${summary.get('TotalIncome',0):,.2f}")
+    income=float(summary.get('TotalIncome',0) or 0)
+    c1.metric("Total Income", f"${income:,.2f}")
     c2.metric("PITIA", f"${summary.get('PITIA',0):,.2f}")
-    c3.metric("FE DTI", f"{summary.get('FE',0.0):.2%}")
-    c4.metric("BE DTI", f"{summary.get('BE',0.0):.2%}")
+    if income<=0:
+        fe_str=be_str="—"
+    else:
+        fe_str=f"{summary.get('FE',0.0):.2%}"
+        be_str=f"{summary.get('BE',0.0):.2%}"
+    c3.metric("FE DTI", fe_str)
+    c4.metric("BE DTI", be_str)
     state={"totals":{"total_income":summary.get("TotalIncome",0.0),"housing_total":summary.get("PITIA",0.0),"other_debts":summary.get("OtherDebts",0.0),"fe":summary.get("FE",0.0),"be":summary.get("BE",0.0),"fe_target":summary.get("FE_target",1.0),"be_target":summary.get("BE_target",1.0)},"flags":flags}
     rules=evaluate_rules(state)
     st.subheader("Warnings & Findings")
