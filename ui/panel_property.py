@@ -11,5 +11,4 @@ def render_property_panel(scn):
     st.write(f"Price ${price:,.0f} | DP ${dp:,.0f} | Rate {rate:.3f}% | Term {term}y")
     if st.button("Edit property & program (open sidebar)"):
         st.session_state["active_editor"] = {"kind": "property", "id": "housing"}
-        st.session_state["drawer_open"] = True
-        st.experimental_rerun()
+        st.rerun()

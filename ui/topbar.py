@@ -21,7 +21,6 @@ def render_topbar():
             st.session_state["selected_borrower"] = next((bid for bid, nm in id_map.items() if nm == chosen), current_id)
             if st.button("Borrowers", key="tb_br_manage"):
                 st.session_state["active_editor"] = {"kind": "borrowers", "id": None}
-                st.session_state["drawer_open"] = True
                 st.rerun()
         with c3:
             colA,colB,colC=st.columns(3)

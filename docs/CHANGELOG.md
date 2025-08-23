@@ -6,7 +6,6 @@ All notable changes to this project will be documented in this file.
 - Compact bottom summary drawer with snapshot totals.
 - Initial project scaffolding and mandatory metadata files.
 - Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
-- Arrow toggle on sidebar header to open and close the drawer.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
@@ -18,11 +17,8 @@ All notable changes to this project will be documented in this file.
 - Prevent type errors in bottom bar when FE/BE targets are provided as strings.
 - Blank drawer when adding income or debt cards due to incorrect editor state.
 - Sidebar drawer rendered empty because widgets were outside the HTML container; content now uses Streamlit's sidebar.
+- Removed sidebar toggle arrow and restored income and debt boards to main layout with a wider persistent sidebar.
 
 ### Changed
 - Removed left data-entry column; main grid shows income, debts, and property boxes only.
-- All data entry forms open in an overlay drawer with disclosures and guides.
-
-- Drawer opens by default on first load.
-
-- Income, debt, and property boards now render inside the sidebar drawer with income board active by default.
+- Sidebar remains visible for data entry with disclosures and guides.
