@@ -232,57 +232,43 @@ def render_context_form(active, scn, warnings):
     render_disclosures(warnings)
 
 def render_drawer(scn, warnings=None):
+    """Render the editor drawer using Streamlit's built-in sidebar.
+
+    The previous implementation attempted to build a custom drawer with raw
+    HTML. Streamlit renders each element in its own root container, so the
+    sidebar HTML wrapper ended up empty, leaving the drawer blank. By using
+    `st.sidebar` as the container we ensure all widgets appear correctly.
+    """
     warnings = warnings or []
-    cfg = THEME["drawer"]
-    width = cfg["drawer_width"]
-    overlay = cfg["overlay_rgba"]
-    transition = cfg["transition_ms"]
-    colors = THEME["colors"]
-    bg = colors.get("panel_bg", "#222")
-    text = colors.get("panel_text", "#fff")
-    border = colors.get("border", "#333")
     open_state = st.session_state.get("drawer_open", False)
-    toggle_left = width if open_state else 0
-    st.markdown(
-        f"""
-    <style>
-    #drawer_toggle{{position:fixed;top:70px;left:{toggle_left}px;z-index:1001;}}
-    #drawer_toggle button{{background:{bg};color:{text};border:none;}}
-    </style>
-    """,
-        unsafe_allow_html=True,
-    )
-    st.markdown("<div id='drawer_toggle'>", unsafe_allow_html=True)
+
+    # Toggle button lives in the main area
     arrow = "\u2190" if open_state else "\u2192"
     if st.button(arrow, key="drawer_toggle_btn"):
         toggle_sidebar()
         st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown(
-        f"""
-    <style>
-    .drawer{{position:fixed;top:0;left:0;bottom:0;width:{width}px;background:{bg};color:{text};padding:16px;border-right:1px solid {border};box-shadow:0 0 10px rgba(0,0,0,.3);transform:translateX(-100%);transition:transform {transition}ms;z-index:1000;overflow-y:auto;}}
-    .drawer.open{{transform:translateX(0);}}
-    .drawer-overlay{{position:fixed;top:0;left:0;right:0;bottom:0;background:{overlay};z-index:999;}}
-    </style>
-    """,
-        unsafe_allow_html=True,
-    )
-    if open_state:
+
+    if not open_state:
+        # Hide sidebar when closed
+        st.sidebar.empty()
         st.markdown(
-            """
-            <div class='drawer-overlay' onclick="document.getElementById('drawer_close').click()"></div>
-            <script>
-            document.addEventListener('keydown', function(e){if(e.key==='Escape'){document.getElementById('drawer_close').click();}});
-            </script>
-            """,
+            "<style>div[data-testid='stSidebar']{display:none;}</style>",
             unsafe_allow_html=True,
         )
-    classes = "drawer open" if open_state else "drawer"
-    st.markdown(f"<div class='{classes}'>", unsafe_allow_html=True)
-    if st.button("✕", key="drawer_close"):
-        st.session_state["drawer_open"] = False
-        st.session_state["active_editor"] = None
-        st.rerun()
-    render_context_form(st.session_state.get("active_editor"), scn, warnings)
-    st.markdown("</div>", unsafe_allow_html=True)
+        return
+
+    # Ensure sidebar is visible and themed
+    colors = THEME["colors"]
+    bg = colors.get("panel_bg", "#222")
+    text = colors.get("panel_text", "#fff")
+    st.markdown(
+        f"<style>div[data-testid='stSidebar']{{display:block;background:{bg};color:{text};}}</style>",
+        unsafe_allow_html=True,
+    )
+
+    with st.sidebar:
+        if st.button("✕", key="drawer_close"):
+            st.session_state["drawer_open"] = False
+            st.session_state["active_editor"] = None
+            st.rerun()
+        render_context_form(st.session_state.get("active_editor"), scn, warnings)
