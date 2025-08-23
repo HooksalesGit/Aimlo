@@ -7,6 +7,9 @@ from core.calculators import (
 )
 from ui.utils import borrower_selectbox
 from core.presets import CONV_MI_BANDS, FHA_TABLE, VA_TABLE, USDA_TABLE
+from ui.cards_income import render_income_board
+from ui.cards_debts import render_debt_board
+from ui.panel_property import render_property_panel
 
 HELP_MAP={
  "W-2":{"annual_salary":"Paystub YTD/Base; W-2 Box 1 context","hourly_rate":"Paystub rate","hours_per_week":"Offer/VOE","ot_ytd":"Paystub YTD OT","bonus_ytd":"Paystub YTD Bonus","comm_ytd":"Paystub YTD Commission","months_ytd":"Months covered by YTD","ot_ly":"W-2/Last Year OT","bonus_ly":"W-2/Last Year Bonus","comm_ly":"W-2/Last Year Comm","months_ly":"Months for LY variable"},
@@ -193,7 +196,15 @@ def render_property_editor(h):
     st.json({"Conventional_MI_bands":CONV_MI_BANDS,"FHA":FHA_TABLE,"VA":VA_TABLE,"USDA":USDA_TABLE})
 def render_context_form(active, scn, warnings):
     """Render the drawer content for the currently active editor."""
-    if active is None or active.get("kind") is None:
+    if active is None or active.get("kind") in {None, "income_board", "debt_board", "property_board"}:
+        kind = None if active is None else active.get("kind")
+        if kind in (None, "income_board"):
+            render_income_board(scn)
+        if kind in (None, "debt_board"):
+            render_debt_board(scn)
+        if kind in (None, "property_board"):
+            render_property_panel(scn)
+        st.markdown("---")
         render_disclosures(warnings)
         return
     if active["kind"] == "income_new":
