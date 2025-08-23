@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - Property info panel now renders in a third column to the right of debts.
 - Sidebar toggle now hides the drawer completely.
 - Hidden sidebar now releases full width and removes top white bar for more title space.
+- Remove inner button shadow to eliminate nested card borders.
 
 - Removed left data-entry column; main grid shows income, debts, and property boxes only.
 - Sidebar remains visible for data entry with disclosures and guides.

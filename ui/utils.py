@@ -35,7 +35,7 @@ def card_select_button(label: str, key: str) -> bool:
     """Render a borderless button that spans its container width."""
     clicked = st.button(label, key=key, use_container_width=True)
     st.markdown(
-        f"<style>button#{key} {{text-align:left; border:none; background:none; padding:0;}}</style>",
+        f"<style>button#{key} {{text-align:left; border:none; background:none; padding:0; box-shadow:none;}}</style>",
         unsafe_allow_html=True,
     )
     return clicked
