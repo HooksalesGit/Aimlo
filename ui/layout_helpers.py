@@ -1,7 +1,7 @@
 """Helper functions for layout styling."""
 from __future__ import annotations
 
-SIDEBAR_WIDTH = 520
+SIDEBAR_WIDTH = 260
 
 
 def build_sidebar_css(panel_bg: str, panel_text: str, visible: bool, width: int = SIDEBAR_WIDTH) -> str:
