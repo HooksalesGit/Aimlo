@@ -49,6 +49,19 @@ def test_render_income_board_sets_new(monkeypatch):
     assert st.session_state["active_editor"] == {"kind": "income_new"}
 
 
+def test_render_income_board_no_extra_kwargs(monkeypatch):
+    """Ensure render_income_board uses only supported st.button parameters."""
+    st.session_state.clear()
+    scn = {"income_cards": []}
+
+    def strict_button(label, key=None, help=None, on_click=None, args=None, kwargs=None, type="secondary", disabled=False, use_container_width=False):
+        """A stub mimicking st.button without **kwargs to surface unexpected params."""
+        return False
+
+    monkeypatch.setattr(st, "button", strict_button)
+    render_income_board(scn)
+
+
 def test_duplicate_and_remove_income_cards():
     st.session_state.clear()
     card = {"id": "a", "type": "W-2", "payload": {}}
