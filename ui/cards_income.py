@@ -49,7 +49,7 @@ def income_monthly(card: dict) -> float:
 def render_income_board(scn):
     st.subheader("All Income")
     if st.button("Add income card"):
-        add_income_card(scn)
+        st.session_state["active_editor"] = {"kind": "income_new"}
     for card in scn.get("income_cards", []):
         p = card.get("payload", {})
         name = borrower_name(scn, int(p.get("borrower_id", 1)))

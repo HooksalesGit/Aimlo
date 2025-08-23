@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Initial project scaffolding and mandatory metadata files.
 - Borrower sidebar cards for name, contact, and credit info with top bar dropdown selection.
 - Income and debt cards now display borrower, type, employer/title, and monthly totals.
+- Income card creation now allows selecting the income type instead of defaulting to W-2 only.
 
 ### Fixed
 - Install pytest in CI workflow to enable test execution.
