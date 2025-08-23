@@ -3,7 +3,7 @@ from core import presets as P
 from core.version import __version__
 
 def render_topbar():
-    st.markdown("<style>div.block-container{padding-top:0;}</style>", unsafe_allow_html=True)
+    st.markdown("<style>div.block-container{padding-top:0.5rem;}</style>", unsafe_allow_html=True)
     st.markdown("""<style>.topbar{position:sticky;top:0;z-index:999;background:var(--background-color);padding:6px 6px;border-bottom:1px solid #eee}</style>""", unsafe_allow_html=True)
     with st.container():
         st.markdown("<div class='topbar'>", unsafe_allow_html=True)
