@@ -29,3 +29,13 @@ def borrower_name(scn: dict, borrower_id: int) -> str:
     """Return formatted borrower full name for the given ID."""
     b = scn.get("borrowers", {}).get(borrower_id, {})
     return f"{b.get('first_name', '')} {b.get('last_name', '')}".strip() or "Borrower"
+
+
+def card_select_button(label: str, key: str) -> bool:
+    """Render a borderless button that spans its container width."""
+    clicked = st.button(label, key=key, use_container_width=True)
+    st.markdown(
+        f"<style>button#{key} {{text-align:left; border:none; background:none; padding:0;}}</style>",
+        unsafe_allow_html=True,
+    )
+    return clicked

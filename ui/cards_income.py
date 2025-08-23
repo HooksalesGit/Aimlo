@@ -11,7 +11,7 @@ from core.calculators import (
     rentals_75pct_gross_monthly,
     other_income_rows_to_monthly,
 )
-from ui.utils import borrower_name
+from ui.utils import borrower_name, card_select_button
 
 
 def add_income_card(scn, typ="W-2"):
@@ -85,12 +85,15 @@ def render_income_board(scn):
                 f"Employer: {employer}\n"
                 f"Monthly: ${monthly:,.2f}"
             )
-            if st.button(summary, key=f"inc_sel_{card['id']}", use_container_width=True):
-                select_income_card(card["id"])
-            c1, c2 = st.columns(2)
-            if c1.button("📄", key=f"inc_dup_{card['id']}", help="Duplicate"):
-                duplicate_income_card(scn, card)
-                st.rerun()
-            if c2.button("🗑️", key=f"inc_rm_{card['id']}", help="Remove"):
-                remove_income_card(scn, card["id"])
-                st.rerun()
+            c1, c2, c3 = st.columns([0.8, 0.1, 0.1])
+            with c1:
+                if card_select_button(summary, key=f"inc_sel_{card['id']}"):
+                    select_income_card(card["id"])
+            with c2:
+                if st.button("📄", key=f"inc_dup_{card['id']}", help="Duplicate"):
+                    duplicate_income_card(scn, card)
+                    st.rerun()
+            with c3:
+                if st.button("🗑️", key=f"inc_rm_{card['id']}", help="Remove"):
+                    remove_income_card(scn, card["id"])
+                    st.rerun()
