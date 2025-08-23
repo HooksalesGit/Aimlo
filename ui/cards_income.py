@@ -97,7 +97,10 @@ def render_income_board(scn):
                 if st.button("🗑️", key=rm_key, help="Remove"):
                     remove_income_card(scn, card_id)
                     st.rerun()
-            if st.button(" ", key=open_key, label_visibility="collapsed"):
+            # Use an invisible button overlay to open the editor when the card is clicked.
+            # `st.button` does not support the `label_visibility` parameter, so we avoid
+            # passing it to prevent a TypeError at runtime.
+            if st.button(" ", key=open_key):
                 select_income_card(card_id)
             st.markdown(
                 f"""
